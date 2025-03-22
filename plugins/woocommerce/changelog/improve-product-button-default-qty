@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Default quantity for ProductButton block now fetched via `woocommerce_loop_add_to_cart_args` instead of `woocommerce_add_to_cart_quantity` hook.

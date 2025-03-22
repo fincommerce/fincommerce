@@ -145,16 +145,27 @@ class ProductButton extends AbstractBlock {
 			)
 		);
 
-		$default_quantity = 1;
 		/**
-		* Filters the change the quantity to add to cart.
-		*
-		* @since 10.9.0
-		* @param number $default_quantity The default quantity.
-		* @param number $product_id The product id.
-		*/
-		$quantity_to_add = apply_filters( 'woocommerce_add_to_cart_quantity', $default_quantity, $product->get_id() );
+		 * Allow filtering of the add to cart button arguments.
+		 *
+		 * @since 9.7.0
+		 */
+		$args = apply_filters(
+			'woocommerce_loop_add_to_cart_args',
+			array(
+				'quantity'   => 1,
+				'class'      => $html_classes,
+				'attributes' => array(
+					'data-product_id'  => $product->get_id(),
+					'data-product_sku' => $product->get_sku(),
+					'aria-label'       => $product->add_to_cart_description(),
+					'rel'              => 'nofollow',
+				),
+			),
+			$product
+		);
 
+		$quantity_to_add                   = absint( $args['quantity'] );
 		$is_descendent_of_add_to_cart_form = isset( $block->context['woocommerce/isDescendantOfAddToCartWithOptions'] ) ? $block->context['woocommerce/isDescendantOfAddToCartWithOptions'] : false;
 		$add_to_cart_text                  = null !== $product->add_to_cart_text() ? $product->add_to_cart_text() : __( 'Add to cart', 'woocommerce' );
 		if ( $is_descendent_of_add_to_cart_form && null !== $product->single_add_to_cart_text() ) {
@@ -167,25 +178,6 @@ class ProductButton extends AbstractBlock {
 			'addToCartText'   => $add_to_cart_text,
 			'tempQuantity'    => $number_of_items_in_cart,
 			'animationStatus' => 'IDLE',
-		);
-
-		/**
-		 * Allow filtering of the add to cart button arguments.
-		 *
-		 * @since 9.7.0
-		 */
-		$args = apply_filters(
-			'woocommerce_loop_add_to_cart_args',
-			array(
-				'class'      => $html_classes,
-				'attributes' => array(
-					'data-product_id'  => $product->get_id(),
-					'data-product_sku' => $product->get_sku(),
-					'aria-label'       => $product->add_to_cart_description(),
-					'rel'              => 'nofollow',
-				),
-			),
-			$product
 		);
 
 		if ( isset( $args['attributes']['aria-label'] ) ) {
