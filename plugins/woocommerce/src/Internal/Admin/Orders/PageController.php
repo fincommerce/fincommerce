@@ -386,6 +386,7 @@ class PageController {
 		$this->order->set_object_read( false );
 		$this->order->set_status( 'auto-draft' );
 		$this->order->set_created_via( 'admin' );
+		$this->order->set_sales_channel( 'admin' );
 		$this->order->save();
 		$this->handle_edit_lock();
 

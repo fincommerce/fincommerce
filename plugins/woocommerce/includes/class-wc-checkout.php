@@ -441,6 +441,7 @@ class WC_Checkout {
 			}
 
 			$order->set_created_via( 'checkout' );
+			$order->set_sales_channel( 'web' );
 			$order->set_cart_hash( $cart_hash );
 			/**
 			 * This action is documented in woocommerce/includes/class-wc-checkout.php

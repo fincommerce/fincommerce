@@ -3027,3 +3027,25 @@ function wc_update_990_remove_email_notes() {
 		array( '%s' )
 	);
 }
+
+/**
+ * Add sales_channel column to orders operational data table
+ *
+ * @return void
+ */
+function wc_update_1000_add_sales_channel_to_orders() {
+	global $wpdb;
+
+	if ( ! wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_exists() ) {
+		return;
+	}
+
+	$operational_data_table_name = OrdersTableDataStore::get_operational_data_table_name();
+
+	$wpdb->query(
+		$wpdb->prepare(
+			'ALTER TABLE %i ADD COLUMN sales_channel varchar(100) NULL AFTER created_via',
+			$operational_data_table_name
+		)
+	);
+}

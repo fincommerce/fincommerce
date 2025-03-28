@@ -48,6 +48,7 @@ class OrderController {
 		$order = new \WC_Order();
 		$order->set_status( 'checkout-draft' );
 		$order->set_created_via( 'store-api' );
+		$order->set_sales_channel( 'web' );
 		$this->update_order_from_cart( $order );
 
 		remove_filter( 'woocommerce_default_order_status', array( $this, 'default_order_status' ) );

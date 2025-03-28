@@ -1,0 +1,4 @@
+Significance: minor
+Type: add
+
+Add sales_channel attribute to WooCommerce Orders, working similarly to created_via to allow tracking of specific marketing or sales channels.

@@ -89,6 +89,7 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 		'_customer_ip_address',
 		'_customer_user_agent',
 		'_created_via',
+		'_sales_channel',
 		'_order_version',
 		'_prices_include_tax',
 		'_date_completed',
@@ -444,6 +445,10 @@ class OrdersTableDataStore extends \Abstract_WC_Order_Data_Store_CPT implements 
 		'created_via'                 => array(
 			'type' => 'string',
 			'name' => 'created_via',
+		),
+		'sales_channel'               => array(
+			'type' => 'string',
+			'name' => 'sales_channel',
 		),
 		'woocommerce_version'         => array(
 			'type' => 'string',
@@ -3194,6 +3199,7 @@ CREATE TABLE $operational_data_table_name (
 	id bigint(20) unsigned auto_increment primary key,
 	order_id bigint(20) unsigned NULL,
 	created_via varchar(100) NULL,
+	sales_channel varchar(100) NULL,
 	woocommerce_version varchar(20) NULL,
 	prices_include_tax tinyint(1) NULL,
 	coupon_usages_are_counted tinyint(1) NULL,

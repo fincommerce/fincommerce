@@ -82,6 +82,7 @@ class WC_Order extends WC_Abstract_Order {
 		'customer_ip_address'          => '',
 		'customer_user_agent'          => '',
 		'created_via'                  => '',
+		'sales_channel'                => '',
 		'customer_note'                => '',
 		'date_completed'               => null,
 		'date_paid'                    => null,
@@ -905,6 +906,17 @@ class WC_Order extends WC_Abstract_Order {
 	}
 
 	/**
+	 * Get sales channel.
+	 *
+	 * @since 10.0.0
+	 * @param  string $context What the value is for. Valid values are view and edit.
+	 * @return string
+	 */
+	public function get_sales_channel( $context = 'view' ) {
+		return $this->get_prop( 'sales_channel', $context );
+	}
+
+	/**
 	 * Get customer note.
 	 *
 	 * @param  string $context What the value is for. Valid values are view and edit.
@@ -1523,6 +1535,17 @@ class WC_Order extends WC_Abstract_Order {
 	 */
 	public function set_created_via( $value ) {
 		$this->set_prop( 'created_via', $value );
+	}
+
+	/**
+	 * Set sales channel.
+	 *
+	 * @since 10.0.0
+	 * @param string $value Sales channel.
+	 * @throws WC_Data_Exception Throws exception when invalid data is found.
+	 */
+	public function set_sales_channel( $value ) {
+		$this->set_prop( 'sales_channel', $value );
 	}
 
 	/**

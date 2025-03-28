@@ -88,6 +88,7 @@ function wc_create_order( $args = array() ) {
 		'customer_note' => null,
 		'parent'        => null,
 		'created_via'   => null,
+		'sales_channel' => null,
 		'cart_hash'     => null,
 		'order_id'      => 0,
 	);
@@ -115,6 +116,10 @@ function wc_create_order( $args = array() ) {
 
 		if ( ! is_null( $args['created_via'] ) ) {
 			$order->set_created_via( sanitize_text_field( $args['created_via'] ) );
+		}
+
+		if ( ! is_null( $args['sales_channel'] ) ) {
+			$order->set_sales_channel( sanitize_text_field( $args['sales_channel'] ) );
 		}
 
 		if ( ! is_null( $args['cart_hash'] ) ) {
