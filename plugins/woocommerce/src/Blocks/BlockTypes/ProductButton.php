@@ -163,14 +163,6 @@ class ProductButton extends AbstractBlock {
 			$add_to_cart_text = $product->single_add_to_cart_text();
 		}
 
-		$context = array(
-			'quantityToAdd'   => $default_quantity,
-			'productId'       => $product->get_id(),
-			'addToCartText'   => $add_to_cart_text,
-			'tempQuantity'    => $number_of_items_in_cart,
-			'animationStatus' => 'IDLE',
-		);
-
 		$attributes = array(
 			'type' => $is_descendent_of_add_to_cart_form ? 'submit' : 'button',
 		);
@@ -211,12 +203,19 @@ class ProductButton extends AbstractBlock {
 			$this->prevent_cache();
 		}
 
-		$div_directives = '
+		$div_directives    = '
 			data-wp-interactive="woocommerce/product-button"
-			data-wp-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
 			data-wp-init="actions.refreshCartItems"
 		';
-
+		$context_directive = wp_interactivity_data_wp_context(
+			array(
+				'quantityToAdd'   => $default_quantity,
+				'productId'       => $product->get_id(),
+				'addToCartText'   => $add_to_cart_text,
+				'tempQuantity'    => $number_of_items_in_cart,
+				'animationStatus' => 'IDLE',
+			)
+		);
 		$button_directives = $is_descendent_of_add_to_cart_form ? '' : 'data-wp-on--click="actions.addCartItem"';
 		$anchor_directive  = 'data-wp-on--click="woocommerce/product-collection::actions.viewProduct"';
 
@@ -255,6 +254,7 @@ class ProductButton extends AbstractBlock {
 			strtr(
 				'<div {wrapper_attributes}
 					{div_directives}
+					{context_directive}
 				>
 					<{html_element}
 						class="{button_classes}"
@@ -274,6 +274,7 @@ class ProductButton extends AbstractBlock {
 					'{attributes}'             => isset( $args['attributes'] ) ? wc_implode_html_attributes( $args['attributes'] ) : '',
 					'{add_to_cart_text}'       => $is_ajax_button ? '' : $add_to_cart_text,
 					'{div_directives}'         => $is_ajax_button ? $div_directives : '',
+					'{context_directive}'      => $is_ajax_button ? $context_directive : '',
 					'{button_directives}'      => $is_ajax_button ? $button_directives : $anchor_directive,
 					'{span_button_directives}' => $is_ajax_button ? $span_button_directives : '',
 					'{view_cart_html}'         => $is_ajax_button && CartCheckoutUtils::has_cart_page() ? $this->get_view_cart_html() : '',

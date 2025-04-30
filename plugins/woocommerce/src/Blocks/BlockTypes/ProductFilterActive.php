@@ -37,13 +37,12 @@ final class ProductFilterActive extends AbstractBlock {
 		$wrapper_attributes = array(
 			'data-wp-interactive'  => 'woocommerce/product-filters',
 			'data-wp-key'          => wp_unique_prefixed_id( $this->get_full_block_name() ),
-			'data-wp-context'      => wp_json_encode(
-				array(
-					'filterType' => 'active',
-				),
-				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-			),
 			'data-wp-bind--hidden' => '!state.hasActiveFilters',
+		);
+		$context_directive  = wp_interactivity_data_wp_context(
+			array(
+				'filterType' => 'active',
+			)
 		);
 
 		wp_interactivity_state(
@@ -62,8 +61,9 @@ final class ProductFilterActive extends AbstractBlock {
 		);
 
 		return sprintf(
-			'<div %1$s>%2$s</div>',
+			'<div %1$s %2$s>%3$s</div>',
 			get_block_wrapper_attributes( $wrapper_attributes ),
+			$context_directive,
 			array_reduce(
 				$block->parsed_block['innerBlocks'],
 				function ( $carry, $parsed_block ) use ( $filter_context ) {

@@ -109,28 +109,30 @@ class ProductTemplate extends AbstractBlock {
 				)
 			)->render( array( 'dynamic' => false ) );
 
-			$context = array(
-				'productId' => $product_id,
-			);
-
-			$li_directives = '
+			$li_directives     = '
 				data-wp-interactive="woocommerce/product-collection"
-				data-wp-context=\'' . wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) . '\'
 				data-wp-key="product-item-' . $product_id . '"
 			';
+			$context_directive = wp_interactivity_data_wp_context(
+				array(
+					'productId' => $product_id,
+				)
+			);
 
 			// Wrap the render inner blocks in a `li` element with the appropriate post classes.
 			$post_classes = implode( ' ', get_post_class( 'wc-block-product' ) );
 			$content     .= strtr(
 				'<li class="{classes}"
 					{li_directives}
+					{context_directive}
 				>
 					{content}
 				</li>',
 				array(
-					'{classes}'       => esc_attr( $post_classes ),
-					'{li_directives}' => $li_directives,
-					'{content}'       => $block_content,
+					'{classes}'           => esc_attr( $post_classes ),
+					'{li_directives}'     => $li_directives,
+					'{context_directive}' => $context_directive,
+					'{content}'           => $block_content,
 				)
 			);
 		}

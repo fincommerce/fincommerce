@@ -144,13 +144,12 @@ final class ProductFilterPrice extends AbstractBlock {
 		$wrapper_attributes = array(
 			'data-wp-interactive' => 'woocommerce/product-filters',
 			'data-wp-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
-			'data-wp-context'     => wp_json_encode(
-				array(
-					'filterType' => 'price',
-					'minRange'   => $min_range,
-					'maxRange'   => $max_range,
-				),
-				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP,
+		);
+		$context_directive  = wp_interactivity_data_wp_context(
+			array(
+				'filterType' => 'price',
+				'minRange'   => $min_range,
+				'maxRange'   => $max_range,
 			),
 		);
 
@@ -180,8 +179,9 @@ final class ProductFilterPrice extends AbstractBlock {
 
 		if ( $min_range === $max_range || ! $max_range ) {
 			return sprintf(
-				'<div %1$s hidden>%2$s</div>',
+				'<div %1$s %2$s hidden>%3$s</div>',
 				get_block_wrapper_attributes( $wrapper_attributes ),
+				$context_directive,
 				array_reduce(
 					$block->parsed_block['innerBlocks'],
 					function ( $carry, $parsed_block ) {

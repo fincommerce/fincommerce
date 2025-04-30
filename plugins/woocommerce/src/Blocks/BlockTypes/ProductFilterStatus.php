@@ -150,13 +150,12 @@ final class ProductFilterStatus extends AbstractBlock {
 		$wrapper_attributes = array(
 			'data-wp-interactive' => 'woocommerce/product-filters',
 			'data-wp-key'         => wp_unique_prefixed_id( $this->get_full_block_name() ),
-			'data-wp-context'     => wp_json_encode(
-				array(
-					/* translators: {{label}} is the status filter item label. */
-					'activeLabelTemplate' => __( 'Status: {{label}}', 'woocommerce' ),
-					'filterType'          => 'status',
-				),
-				JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+		);
+		$context_directive  = wp_interactivity_data_wp_context(
+			array(
+				/* translators: {{label}} is the status filter item label. */
+				'activeLabelTemplate' => __( 'Status: {{label}}', 'woocommerce' ),
+				'filterType'          => 'status',
 			),
 		);
 
@@ -165,10 +164,11 @@ final class ProductFilterStatus extends AbstractBlock {
 		}
 
 		return sprintf(
-			'<div %1$s>%2$s</div>',
+			'<div %1$s %2$s>%3$s</div>',
 			get_block_wrapper_attributes(
 				$wrapper_attributes
 			),
+			$context_directive,
 			array_reduce(
 				$block->parsed_block['innerBlocks'],
 				function ( $carry, $parsed_block ) use ( $filter_context ) {
