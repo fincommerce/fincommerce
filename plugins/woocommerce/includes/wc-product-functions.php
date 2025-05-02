@@ -17,6 +17,7 @@ use Automattic\WooCommerce\Proxies\LegacyProxy;
 use Automattic\WooCommerce\Utilities\ArrayUtil;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 use Automattic\WooCommerce\Internal\ProductImage\MatchImageBySKU;
+use Automattic\WooCommerce\Internal\Admin\ProductDownloadsPreview;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -621,34 +622,36 @@ add_action( 'woocommerce_scheduled_sales', 'wc_scheduled_sales' );
 /**
  * Get attachment image attributes.
  *
- * @param array $attr Image attributes.
+ * @param array        $attr Image attributes.
+ * @param WP_Post      $attachment post the attachment belongs to.
+ * @param string|int[] $size attachment dimensions.
+ *
  * @return array
  */
-function wc_get_attachment_image_attributes( $attr ) {
-	/*
-	 * If the user can manage woocommerce, allow them to
-	 * see the image content.
-	 */
-	if ( current_user_can( 'manage_woocommerce' ) ) {
+function wc_get_attachment_image_attributes( $attr, $attachment, $size ) {
+	// Early return if src isn't set or isn't in woocommerce_uploads.
+	if ( ! isset( $attr['src'] ) || ! strstr( $attr['src'], 'woocommerce_uploads/' ) ) {
 		return $attr;
 	}
 
-	/*
-	 * If the user does not have the right capabilities,
-	 * filter out the image source and replace with placeholder
-	 * image.
-	 */
-	if ( isset( $attr['src'] ) && strstr( $attr['src'], 'woocommerce_uploads/' ) ) {
-		$attr['src'] = wc_placeholder_img_src();
-
-		if ( isset( $attr['srcset'] ) ) {
-			$attr['srcset'] = '';
-		}
+	if ( isset( $attr['srcset'] ) ) {
+		$attr['srcset'] = '';
 	}
+
+	// If not a WooCommerce manager, return placeholder.
+	if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		$attr['src'] = wc_placeholder_img_src( $size );
+		return $attr;
+	}
+
+	// Generate secure admin URL for image src.
+	$admin_preview = wc_get_container()->get( ProductDownloadsPreview::class );
+	$attr['src']   = $admin_preview->get_admin_image_src_url( $attachment->ID, $size );
+
 	return $attr;
 }
-add_filter( 'wp_get_attachment_image_attributes', 'wc_get_attachment_image_attributes' );
 
+add_filter( 'wp_get_attachment_image_attributes', 'wc_get_attachment_image_attributes', 10, 3 );
 
 /**
  * Prepare attachment for JavaScript.
@@ -657,25 +660,31 @@ add_filter( 'wp_get_attachment_image_attributes', 'wc_get_attachment_image_attri
  * @return array
  */
 function wc_prepare_attachment_for_js( $response ) {
-	/*
-	 * If the user can manage woocommerce, allow them to
-	 * see the image content.
-	 */
-	if ( current_user_can( 'manage_woocommerce' ) ) {
+	if ( ! isset( $response['url'] ) || ! strstr( $response['url'], 'woocommerce_uploads/' ) ) {
 		return $response;
 	}
 
-	/*
-	 * If the user does not have the right capabilities,
-	 * filter out the image source and replace with placeholder
-	 * image.
-	 */
-	if ( isset( $response['url'] ) && strstr( $response['url'], 'woocommerce_uploads/' ) ) {
+	// If not a WooCommerce manager, return placeholder for all image sizse.
+	if ( ! current_user_can( 'manage_woocommerce' ) ) {
 		$response['full']['url'] = wc_placeholder_img_src();
 		if ( isset( $response['sizes'] ) ) {
 			foreach ( $response['sizes'] as $size => $value ) {
-				$response['sizes'][ $size ]['url'] = wc_placeholder_img_src();
+				$response['sizes'][ $size ]['url'] = wc_placeholder_img_src( $size );
 			}
+		}
+		return $response;
+	}
+
+	$product_id    = $response['uploadedTo'];
+	$attachment_id = $response['id'];
+
+	// Generate secure admin URL for image src.
+	$admin_preview = wc_get_container()->get( ProductDownloadsPreview::class );
+
+	if ( isset( $response['sizes'] ) ) {
+		foreach ( $response['sizes'] as $size => $value ) {
+			$url                               = $admin_preview->get_admin_image_src_url( $attachment_id, $size );
+			$response['sizes'][ $size ]['url'] = $url;
 		}
 	}
 
@@ -1940,4 +1949,5 @@ function wc_product_attach_featured_image( $attachment_id, $product = null, $sav
 		);
 	}
 }
+
 add_action( 'add_attachment', 'wc_product_attach_featured_image' );

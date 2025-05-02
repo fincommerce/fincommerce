@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Avoid display errors for images added as product downloads by showing the placeholder image instead for apache server configuration where access to woocommerce_uploads directly is not allowed.

@@ -10,6 +10,7 @@ namespace Automattic\WooCommerce;
 use Automattic\WooCommerce\Internal\DependencyManagement\ContainerException;
 use Automattic\WooCommerce\Internal\DependencyManagement\ExtendedContainer;
 use Automattic\WooCommerce\Internal\DependencyManagement\RuntimeContainer;
+use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\AdminServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\AdminSettingsServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\CostOfGoodsSoldServiceProvider;
 use Automattic\WooCommerce\Internal\DependencyManagement\ServiceProviders\COTMigrationServiceProvider;
@@ -172,6 +173,7 @@ final class Container {
 			StatsServiceProvider::class,
 			ImportExportServiceProvider::class,
 			CostOfGoodsSoldServiceProvider::class,
+			AdminServiceProvider::class,
 			AdminSettingsServiceProvider::class,
 			AdminSuggestionsServiceProvider::class,
 			EmailEditorServiceProvider::class,
