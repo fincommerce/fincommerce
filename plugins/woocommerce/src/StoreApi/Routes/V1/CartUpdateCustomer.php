@@ -132,26 +132,19 @@ class CartUpdateCustomer extends AbstractCartRoute {
 		$customer = wc()->customer;
 
 		// Get data from request object and merge with customer object, then sanitize.
-		$billing  = $this->schema->billing_address_schema->sanitize_callback(
-			wp_parse_args(
-				$request['billing_address'] ?? [],
-				$this->get_customer_billing_address( $customer )
-			),
-			$request,
-			'billing_address'
-		);
-		$shipping = $this->schema->billing_address_schema->sanitize_callback(
-			wp_parse_args(
-				$request['shipping_address'] ?? [],
-				$this->get_customer_shipping_address( $customer )
-			),
-			$request,
-			'shipping_address'
+		$billing = wp_parse_args(
+			$request['billing_address'] ?? [],
+			$this->get_customer_billing_address( $customer )
 		);
 
 		// If the cart does not need shipping, shipping address is forced to match billing address unless defined.
 		if ( ! $cart->needs_shipping() && ! isset( $request['shipping_address'] ) ) {
 			$shipping = $billing;
+		} else {
+			$shipping = wp_parse_args(
+				$request['shipping_address'] ?? [],
+				$this->get_customer_shipping_address( $customer )
+			);
 		}
 
 		// Run validation and sanitization now that the cart and customer data is loaded.
