@@ -47,7 +47,6 @@ class ProductGallery extends AbstractBlock {
 		ob_start();
 		?>
 		<dialog
-				data-wp-ref
 				data-wp-bind--open="context.isDialogOpen"
 				data-wp-on--close="actions.closeDialog"
 				data-wp-on--keydown="actions.onDialogKeyDown"
