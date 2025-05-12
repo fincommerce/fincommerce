@@ -7,35 +7,24 @@
 	flex-wrap: wrap;
 }
 
-.wc-block-add-to-cart-with-options-variation-selector-attribute-options__pill {
-	border-width: 1px;
-	border-style: solid;
-	border-radius: 2px;
-	padding: 0.25em 0.75em;
-	font-size: var(--wp--preset--font-size--small);
+.wp-element-button.wc-block-add-to-cart-with-options-variation-selector-attribute-options__pill {
 	cursor: pointer;
 	user-select: none;
 
-	&:hover {
-		background-color: color-mix(in srgb, var(--wp--preset--color--contrast) 10%, transparent);
-	}
-
-	&:focus {
-		outline-color: var(--wp--preset--color--accent-4);
-		outline-offset: 2px;
-	}
-
-	&[aria-checked="true"] {
-		&:hover {
-			background-color: color-mix(in srgb, var(--wp--preset--color--contrast) 85%, transparent);
-		}
+	&.is-style-outline {
+		color: inherit;
+		background-color: transparent;
+		border-color: inherit;
+		backdrop-filter: none;
 	}
 
 	&[aria-checked="false"] {
 		border-color: currentColor;
 	}
 
-	&[aria-disabled="true"] {
+	&[aria-disabled="true"],
+	// Disabled state (button 3)
+	&--disabled.is-style-outline {
 		border-color: var(--wc-subtext);
 		color: var(--wc-subtext);
 		text-decoration: line-through;
@@ -44,6 +33,4 @@
 
 .wc-block-add-to-cart-with-options-variation-selector-attribute-options__dropdown {
 	height: 3em;
-	padding: 0.25em 1em;
-	font-size: var(--wp--preset--font-size--small);
 }

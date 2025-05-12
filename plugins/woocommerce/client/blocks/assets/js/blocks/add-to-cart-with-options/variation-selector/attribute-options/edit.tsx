@@ -15,11 +15,6 @@ import { useCustomDataContext } from '@woocommerce/shared-context';
 import type { ProductResponseAttributeItem } from '@woocommerce/types';
 import clsx from 'clsx';
 
-/**
- * Internal dependencies
- */
-import { useThemeColors } from '../../../../shared/hooks/use-theme-colors';
-
 interface Attributes {
 	className?: string;
 	style?: 'pills' | 'dropdown';
@@ -41,10 +36,11 @@ function Pills( {
 				<li
 					key={ option.value }
 					className={ clsx(
-						'wc-block-add-to-cart-with-options-variation-selector-attribute-options__pill',
+						'wp-element-button wc-block-add-to-cart-with-options-variation-selector-attribute-options__pill',
 						{
 							'wc-block-add-to-cart-with-options-variation-selector-attribute-options__pill--selected':
 								index === 0,
+							'is-style-outline': index !== 0,
 							'wc-block-add-to-cart-with-options-variation-selector-attribute-options__pill--disabled':
 								option.disabled,
 						}
@@ -66,18 +62,6 @@ export default function AttributeOptionsEdit(
 	const blockProps = useBlockProps( {
 		className,
 	} );
-
-	// Apply selected variation pill styles based on Site Editor's background and text colors.
-	useThemeColors(
-		'add-to-cart-with-options-variation-selector-attribute-options',
-		( { editorBackgroundColor, editorColor } ) => `
-			:where(.wc-block-add-to-cart-with-options-variation-selector-attribute-options__pill--selected) {
-				background-color: ${ editorColor };
-				color: ${ editorBackgroundColor };
-				border-color: ${ editorColor };
-			}
-		`
-	);
 
 	const { data: attribute } =
 		useCustomDataContext< ProductResponseAttributeItem >( 'attribute' );
