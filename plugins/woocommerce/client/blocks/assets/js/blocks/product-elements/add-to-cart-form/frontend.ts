@@ -48,34 +48,42 @@ const dispatchChangeEvent = ( inputElement: HTMLInputElement ) => {
 	inputElement.dispatchEvent( event );
 };
 
-store( 'woocommerce/add-to-cart-form', {
-	state: {},
-	actions: {
-		addQuantity: ( event: HTMLElementEvent< HTMLButtonElement > ) => {
-			const inputData = getInputData( event );
-			if ( ! inputData ) {
-				return;
-			}
-			const { currentValue, maxValue, step, inputElement } = inputData;
-			const newValue = currentValue + step;
+store(
+	'woocommerce/add-to-cart-form',
+	{
+		state: {},
+		actions: {
+			addQuantity: ( event: HTMLElementEvent< HTMLButtonElement > ) => {
+				const inputData = getInputData( event );
+				if ( ! inputData ) {
+					return;
+				}
+				const { currentValue, maxValue, step, inputElement } =
+					inputData;
+				const newValue = currentValue + step;
 
-			if ( maxValue === undefined || newValue <= maxValue ) {
-				inputElement.value = newValue.toString();
-				dispatchChangeEvent( inputElement );
-			}
-		},
-		removeQuantity: ( event: HTMLElementEvent< HTMLButtonElement > ) => {
-			const inputData = getInputData( event );
-			if ( ! inputData ) {
-				return;
-			}
-			const { currentValue, minValue, step, inputElement } = inputData;
-			const newValue = currentValue - step;
+				if ( maxValue === undefined || newValue <= maxValue ) {
+					inputElement.value = newValue.toString();
+					dispatchChangeEvent( inputElement );
+				}
+			},
+			removeQuantity: (
+				event: HTMLElementEvent< HTMLButtonElement >
+			) => {
+				const inputData = getInputData( event );
+				if ( ! inputData ) {
+					return;
+				}
+				const { currentValue, minValue, step, inputElement } =
+					inputData;
+				const newValue = currentValue - step;
 
-			if ( newValue >= minValue ) {
-				inputElement.value = newValue.toString();
-				dispatchChangeEvent( inputElement );
-			}
+				if ( newValue >= minValue ) {
+					inputElement.value = newValue.toString();
+					dispatchChangeEvent( inputElement );
+				}
+			},
 		},
 	},
-} );
+	{ lock: true }
+);

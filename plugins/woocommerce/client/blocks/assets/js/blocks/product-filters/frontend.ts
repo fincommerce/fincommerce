@@ -226,5 +226,6 @@ export type ProductFiltersStore = typeof productFiltersStore;
 
 const { state, actions } = store< ProductFiltersStore >(
 	'woocommerce/product-filters',
-	productFiltersStore
+	productFiltersStore,
+	{ lock: true }
 );

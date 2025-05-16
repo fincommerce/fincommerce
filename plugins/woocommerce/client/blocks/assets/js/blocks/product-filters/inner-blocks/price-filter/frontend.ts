@@ -21,6 +21,9 @@ export type ProductFilterPriceContext = {
 	maxRange: number;
 };
 
+const universalLock =
+	'I acknowledge that using a private store means my plugin will inevitably break on the next store release.';
+
 const productFilterPriceStore = {
 	state: {
 		get minPrice() {
@@ -175,4 +178,6 @@ export type ProductFilterPriceStore = typeof productFilterPriceStore;
 
 const { state, actions } = store<
 	ProductFiltersStore & ProductFilterPriceStore
->( 'woocommerce/product-filters', productFilterPriceStore );
+>( 'woocommerce/product-filters', productFilterPriceStore, {
+	lock: universalLock,
+} );
