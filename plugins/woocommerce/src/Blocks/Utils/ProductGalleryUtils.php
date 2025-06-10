@@ -20,7 +20,7 @@ class ProductGalleryUtils {
 
 		$gallery_image_ids           = self::get_product_gallery_image_ids( $product );
 		$product_variation_image_ids = self::get_product_variation_image_ids( $product );
-		$all_image_ids               = array_values( array_map( 'intval', array_unique( array_merge( $gallery_image_ids, $product_variation_image_ids ) ) ) );
+		$all_image_ids               = array_values( array_unique( array_merge( $gallery_image_ids, $product_variation_image_ids ) ) );
 
 		if ( empty( $all_image_ids ) ) {
 			return array();
@@ -76,26 +76,55 @@ class ProductGalleryUtils {
 				continue;
 			}
 
-			// Get the image source.
-			$full_src = wp_get_attachment_image_src( $image_id, $size );
+			// Get the attachment post
+			$attachment = get_post( $image_id );
+			if ( ! $attachment ) {
+				continue;
+			}
 
-			// Get srcset and sizes.
-			$srcset = wp_get_attachment_image_srcset( $image_id, $size );
-			$sizes  = wp_get_attachment_image_sizes( $image_id, $size );
-			$alt    = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+			// Check if it's a video
+			$mime_type = get_post_mime_type( $image_id );
+			$is_video = strpos( $mime_type, 'video/' ) === 0;
 
-			$image_src_data[] = array(
-				'id'     => $image_id,
-				'src'    => $full_src ? $full_src[0] : '',
-				'srcset' => $srcset ? $srcset : '',
-				'sizes'  => $sizes ? $sizes : '',
-				'alt'    => $alt ? $alt : sprintf(
-					/* translators: 1: Product title 2: Image number */
-					__( '%1$s - Image %2$d', 'woocommerce' ),
-					$product_title,
-					$index + 1
-				),
-			);
+			if ( $is_video ) {
+				// For videos, get the direct URL
+				$video_url = wp_get_attachment_url( $image_id );
+				$alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+
+				$image_src_data[] = array(
+					'id'     => intval( $image_id ),
+					'src'    => $video_url,
+					'srcset' => '',
+					'sizes'  => '',
+					'alt'    => $alt ? $alt : sprintf(
+						/* translators: 1: Product title 2: Video number */
+						__( '%1$s - Video %2$d', 'woocommerce' ),
+						$product_title,
+						$index + 1
+					),
+					'type'   => 'video',
+				);
+			} else {
+				// For images, get the image source data as before
+				$full_src = wp_get_attachment_image_src( $image_id, $size );
+				$srcset = wp_get_attachment_image_srcset( $image_id, $size );
+				$sizes = wp_get_attachment_image_sizes( $image_id, $size );
+				$alt = get_post_meta( $image_id, '_wp_attachment_image_alt', true );
+
+				$image_src_data[] = array(
+					'id'     => intval( $image_id ),
+					'src'    => $full_src ? $full_src[0] : '',
+					'srcset' => $srcset ? $srcset : '',
+					'sizes'  => $sizes ? $sizes : '',
+					'alt'    => $alt ? $alt : sprintf(
+						/* translators: 1: Product title 2: Image number */
+						__( '%1$s - Image %2$d', 'woocommerce' ),
+						$product_title,
+						$index + 1
+					),
+					'type'   => 'image',
+				);
+			}
 		}
 
 		return $image_src_data;
@@ -122,8 +151,8 @@ class ProductGalleryUtils {
 					$variation = wc_get_product( $variation_id );
 					if ( $variation ) {
 						$variation_image_id = $variation->get_image_id();
-						if ( ! empty( $variation_image_id ) && ! in_array( strval( $variation_image_id ), $variation_image_ids, true ) ) {
-							$variation_image_ids[] = strval( $variation_image_id );
+						if ( ! empty( $variation_image_id ) && ! in_array( $variation_image_id, $variation_image_ids, true ) ) {
+							$variation_image_ids[] = $variation_image_id;
 						}
 					}
 				}
@@ -162,11 +191,7 @@ class ProductGalleryUtils {
 
 		// If the Product image is not set and there are no gallery images, we need to set it to a placeholder image.
 		if ( ! $featured_image_id && empty( $product_gallery_image_ids ) ) {
-			$product_image_ids[] = '0';
-		}
-
-		foreach ( $product_image_ids as $key => $image_id ) {
-			$product_image_ids[ $key ] = strval( $image_id );
+			$product_image_ids[] = 0;
 		}
 
 		// Reindex array.

@@ -120,39 +120,66 @@ class ProductGalleryLargeImage extends AbstractBlock {
 			>
 				<?php foreach ( $image_data as $index => $image ) : ?>
 					<li class="wc-block-product-gallery-large-image__wrapper">
-						<img
-							class="<?php echo esc_attr( $base_classes ); ?>"
-							src="<?php echo esc_attr( $image['src'] ); ?>"
-							srcset="<?php echo esc_attr( $image['srcset'] ); ?>"
-							sizes="<?php echo esc_attr( $image['sizes'] ); ?>"
-							data-image-id="<?php echo esc_attr( $image['id'] ); ?>"
-							alt="<?php echo esc_attr( $image['alt'] ); ?>"
-							data-wp-on--touchstart="actions.onTouchStart"
-							data-wp-on--touchmove="actions.onTouchMove"
-							data-wp-on--touchend="actions.onTouchEnd"
-							<?php if ( $context['hoverZoom'] ) : ?>
-								data-wp-on--mousemove="actions.startZoom"
-								data-wp-on--mouseleave="actions.resetZoom"
-							<?php endif; ?>
-							<?php if ( $context['fullScreenOnClick'] ) : ?>
-								data-wp-on--click="actions.openDialog"
-							<?php endif; ?>
-							<?php if ( 0 === $index ) : ?>
-								fetchpriority="high"
-							<?php else : ?>
-								fetchpriority="low"
-								loading="lazy"
-							<?php endif; ?>
-							tabindex="-1"
-							draggable="false"
-						/>
+						<?php if ( isset( $image['type'] ) && 'video' === $image['type'] ) : ?>
+							<video
+								class="<?php echo esc_attr( $base_classes ); ?>"
+								src="<?php echo esc_attr( $image['src'] ); ?>"
+								alt="<?php echo esc_attr( $image['alt'] ); ?>"
+								data-image-id=<?php echo esc_attr( $image['id'] ); ?>
+								controls
+								preload="metadata"
+								muted
+								playsinline
+								loop
+								disablepictureinpicture
+								autoplay
+								data-wp-on--touchstart="actions.onTouchStart"
+								data-wp-on--touchmove="actions.onTouchMove"
+								data-wp-on--touchend="actions.onTouchEnd"
+								<?php if ( $context['fullScreenOnClick'] ) : ?>
+									data-wp-on--click="actions.openDialog"
+								<?php endif; ?>
+								<?php if ( 0 === $index ) : ?>
+									fetchpriority="high"
+								<?php else : ?>
+									fetchpriority="low"
+									loading="lazy"
+								<?php endif; ?>
+								tabindex="-1"
+							/>
+						<?php else : ?>
+							<img
+								class="<?php echo esc_attr( $base_classes ); ?>"
+								src="<?php echo esc_attr( $image['src'] ); ?>"
+								srcset="<?php echo esc_attr( $image['srcset'] ); ?>"
+								sizes="<?php echo esc_attr( $image['sizes'] ); ?>"
+								data-image-id=<?php echo esc_attr( $image['id'] ); ?>
+								alt="<?php echo esc_attr( $image['alt'] ); ?>"
+								data-wp-on--touchstart="actions.onTouchStart"
+								data-wp-on--touchmove="actions.onTouchMove"
+								data-wp-on--touchend="actions.onTouchEnd"
+								<?php if ( $context['hoverZoom'] ) : ?>
+									data-wp-on--mousemove="actions.startZoom"
+									data-wp-on--mouseleave="actions.resetZoom"
+								<?php endif; ?>
+								<?php if ( $context['fullScreenOnClick'] ) : ?>
+									data-wp-on--click="actions.openDialog"
+								<?php endif; ?>
+								<?php if ( 0 === $index ) : ?>
+									fetchpriority="high"
+								<?php else : ?>
+									fetchpriority="low"
+									loading="lazy"
+								<?php endif; ?>
+								tabindex="-1"
+								draggable="false"
+							/>
+						<?php endif; ?>
 					</li>
 				<?php endforeach; ?>
 			</ul>
 		<?php
-		$template = ob_get_clean();
-
-		return wp_interactivity_process_directives( $template );
+		return ob_get_clean();
 	}
 
 	/**

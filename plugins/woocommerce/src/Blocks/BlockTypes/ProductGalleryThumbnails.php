@@ -100,22 +100,47 @@ class ProductGalleryThumbnails extends AbstractBlock {
 				role="listbox">
 				<?php foreach ( $product_gallery_images as $index => $image ) : ?>
 					<div class="wc-block-product-gallery-thumbnails__thumbnail">
-						<img
-							class="<?php echo 0 === $index ? esc_attr( $img_class . ' wc-block-product-gallery-thumbnails__thumbnail__image--is-active' ) : esc_attr( $img_class ); ?>"
-							data-image-id="<?php echo esc_attr( $image['id'] ); ?>"
-							src="<?php echo esc_attr( $image['src'] ); ?>"
-							srcset="<?php echo esc_attr( $image['srcset'] ); ?>"
-							sizes="<?php echo esc_attr( $image['sizes'] ); ?>"
-							alt="<?php echo esc_attr( $image['alt'] ); ?>"
-							data-wp-on--click="actions.selectCurrentImage"
-							data-wp-on--keydown="actions.onThumbnailsArrowsKeyDown"
-							data-wp-watch="callbacks.toggleActiveThumbnailAttributes"
-							decoding="async"
-							tabindex="<?php echo 0 === $index ? '0' : '-1'; ?>"
-							draggable="false"
-							loading="lazy"
-							role="option"
-							style="aspect-ratio: <?php echo esc_attr( $attributes['aspectRatio'] ); ?>" />
+						<?php
+						$mime_type = get_post_mime_type( $image['id'] );
+						$is_video = strpos( $mime_type, 'video/' ) === 0;
+						?>
+						<?php if ( $is_video ) : ?>
+							<?php
+							// Get video thumbnail
+							$thumbnail_src = wc_placeholder_img_src();
+							?>
+							<img
+								class="<?php echo $img_class . ' wc-block-product-gallery-thumbnails__thumbnail__video'?>"
+								data-image-id="<?php echo esc_attr( $image['id'] ); ?>"
+								src="<?php echo esc_attr( $thumbnail_src ); ?>"
+								alt=""
+								data-wp-on--click="actions.selectCurrentImage"
+								data-wp-on--keydown="actions.onThumbnailsArrowsKeyDown"
+								data-wp-watch="callbacks.toggleActiveThumbnailAttributes"
+								decoding="async"
+								tabindex="<?php echo 0 === $index ? '0' : '-1'; ?>"
+								draggable="false"
+								loading="lazy"
+								role="option"
+								style="aspect-ratio: <?php echo esc_attr( $attributes['aspectRatio'] ); ?>" />
+						<?php else : ?>
+							<img
+								class="<?php echo 0 === $index ? esc_attr( $img_class . ' wc-block-product-gallery-thumbnails__thumbnail__image--is-active' ) : esc_attr( $img_class ); ?>"
+								data-image-id="<?php echo esc_attr( $image['id'] ); ?>"
+								src="<?php echo esc_attr( $image['src'] ); ?>"
+								srcset="<?php echo esc_attr( $image['srcset'] ); ?>"
+								sizes="<?php echo esc_attr( $image['sizes'] ); ?>"
+								alt="<?php echo esc_attr( $image['alt'] ); ?>"
+								data-wp-on--click="actions.selectCurrentImage"
+								data-wp-on--keydown="actions.onThumbnailsArrowsKeyDown"
+								data-wp-watch="callbacks.toggleActiveThumbnailAttributes"
+								decoding="async"
+								tabindex="<?php echo 0 === $index ? '0' : '-1'; ?>"
+								draggable="false"
+								loading="lazy"
+								role="option"
+								style="aspect-ratio: <?php echo esc_attr( $attributes['aspectRatio'] ); ?>" />
+						<?php endif; ?>
 					</div>
 				<?php endforeach; ?>
 			</div>

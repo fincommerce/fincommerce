@@ -54,7 +54,7 @@ const scrollImageIntoView = ( imageId: number ) => {
 	}
 
 	const imageElement = galleryContainer.querySelector(
-		`.wp-block-woocommerce-product-gallery-large-image img[data-image-id="${ imageId }"]`
+		`.wp-block-woocommerce-product-gallery-large-image [data-image-id="${ imageId }"]`
 	);
 
 	if ( imageElement ) {
@@ -281,7 +281,10 @@ const productGallery = {
 				}
 			}
 		},
-		openDialog: () => {
+		openDialog: ( event?: MouseEvent ) => {
+			if ( event ) {
+				event.preventDefault();
+			}
 			const context = getContext();
 			context.isDialogOpen = true;
 			document.body.classList.add(
