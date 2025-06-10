@@ -424,9 +424,6 @@ importers:
       '@types/wordpress__blocks':
         specifier: 11.0.7
         version: 11.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__rich-text':
-        specifier: 3.4.6
-        version: 3.4.6(react@18.3.1)
       '@woocommerce/csv-export':
         specifier: workspace:*
         version: link:../csv-export
@@ -2634,24 +2631,15 @@ importers:
       '@types/wordpress__block-library':
         specifier: 2.6.1
         version: 2.6.1
-      '@types/wordpress__date':
-        specifier: 3.3.2
-        version: 3.3.2
       '@types/wordpress__edit-post':
         specifier: 7.5.4
         version: 7.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/wordpress__editor':
         specifier: 13.0.0
         version: 13.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__keycodes':
-        specifier: 2.3.1
-        version: 2.3.1
       '@types/wordpress__media-utils':
         specifier: 3.0.0
         version: 3.0.0(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__rich-text':
-        specifier: 3.4.6
-        version: 3.4.6(react@18.3.1)
       '@woocommerce/eslint-plugin':
         specifier: workspace:*
         version: link:../eslint-plugin
@@ -3624,9 +3612,6 @@ importers:
       '@types/wordpress__media-utils':
         specifier: 4.14.4
         version: 4.14.4(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__notices':
-        specifier: 3.3.0
-        version: 3.3.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.62.0
         version: 5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.55.0)(typescript@5.7.2))(eslint@8.55.0)(typescript@5.7.2)
@@ -4178,12 +4163,6 @@ importers:
       '@types/wordpress__editor':
         specifier: ^13.6.7
         version: 13.6.7(@emotion/is-prop-valid@1.2.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/wordpress__notices':
-        specifier: 3.3.0
-        version: 3.3.0
-      '@types/wordpress__rich-text':
-        specifier: 6.10.0
-        version: 6.10.0(react@18.3.1)
       '@typescript-eslint/eslint-plugin':
         specifier: 5.56.0
         version: 5.56.0(@typescript-eslint/parser@5.56.0(eslint@8.55.0)(typescript@5.7.2))(eslint@8.55.0)(typescript@5.7.2)
@@ -9800,9 +9779,6 @@ packages:
   '@types/wordpress__data@6.0.2':
     resolution: {integrity: sha512-Pu67knXXoTWgCpxTKwePNZz/iKkYe8AQbkkSD/Ba1mw8t4zgEM+jJs5IV5N5ij/awwjs4Subj8mkvS3jMTDwyw==}
 
-  '@types/wordpress__date@3.3.2':
-    resolution: {integrity: sha512-8ZW580Rn/NMVNC0uTHaPyWEMgtvymBDXybiJY6mufX5PdWGn4TGMik9ev3+nvwSXlOlz4Wsug/6jUwLfGJJH0w==}
-
   '@types/wordpress__edit-post@7.5.4':
     resolution: {integrity: sha512-1Xlq8k+MSNYv8VbEZ0hLa5BE1avDdrZtX86YptfjV+KEYTRMCokJDUer/k1qig/jqOwboxNhc0myNE5wNTMo5A==}
 
@@ -9832,12 +9808,6 @@ packages:
 
   '@types/wordpress__notices@3.27.6':
     resolution: {integrity: sha512-cKK9Cu/br81XqNwxUTRjwGZuLtf6Ug76O77Qc1YF4+RhY8pruxKcWa2+TYzojeh6/83HXw4JjXY7tiI/WD4uoA==}
-
-  '@types/wordpress__notices@3.3.0':
-    resolution: {integrity: sha512-XR9WE4qes2wJCLuStD5Vm9yh/DMsELpcgYmmQW4Rs+zP+bIc6NMnKeDhr9OAhdkWNPVZ/YVshBz1GGjOdNSqDA==}
-
-  '@types/wordpress__rich-text@3.4.6':
-    resolution: {integrity: sha512-MeLSATBHrcN3fp8cVylbpx+BKRJ1aootPNtbTblcUAHcuRo6avKu1kaDLxIZb/8YbsD+/3Wm8d1uldeNz9/lhw==}
 
   '@types/wordpress__rich-text@6.10.0':
     resolution: {integrity: sha512-NrG+000/kI0ltUe1uT750E/YuHzDceAFbrcEG7AY81BoqUBNhjUE8QNOwt07V6QXZ/tPcKEdhGOGMs9K9SrHKg==}
@@ -28114,9 +28084,7 @@ snapshots:
       source-map: 0.6.1
       string-length: 2.0.0
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@jest/reporters@26.6.2':
     dependencies:
@@ -33755,10 +33723,6 @@ snapshots:
       '@types/react': 18.3.16
       redux: 4.2.1
 
-  '@types/wordpress__date@3.3.2':
-    dependencies:
-      moment: 2.29.4
-
   '@types/wordpress__edit-post@7.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@types/react': 18.3.16
@@ -33877,18 +33841,6 @@ snapshots:
     dependencies:
       '@types/react': 18.3.16
       '@wordpress/data': 10.0.2(patch_hash=xjmezqav3jkhcz5453svqnw2p4)(react@18.3.1)
-    transitivePeerDependencies:
-      - react
-
-  '@types/wordpress__notices@3.3.0':
-    dependencies:
-      '@types/react': 18.3.16
-
-  '@types/wordpress__rich-text@3.4.6(react@18.3.1)':
-    dependencies:
-      '@types/react': 18.3.16
-      '@types/wordpress__data': 6.0.2
-      '@types/wordpress__rich-text': 6.10.0(react@18.3.1)
     transitivePeerDependencies:
       - react
 
@@ -47786,9 +47738,7 @@ snapshots:
       pretty-format: 24.9.0
       throat: 4.1.0
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   jest-jasmine2@26.6.3:
     dependencies:
