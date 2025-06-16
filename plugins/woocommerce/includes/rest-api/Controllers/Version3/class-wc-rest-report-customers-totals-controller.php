@@ -56,7 +56,7 @@ class WC_REST_Report_Customers_Totals_Controller extends WC_REST_Reports_Control
 				'number'       => 0,
 				'fields'       => 'ID',
 				'count_total'  => true,
-				'meta_query'   => array( // WPCS: slow query ok.
+				'meta_query'   => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 					array(
 						'key'     => 'paying_customer',
 						'value'   => 1,

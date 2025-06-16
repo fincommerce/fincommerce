@@ -519,7 +519,7 @@ AND pm.meta_value IN ( '" . implode( "','", $customer_data ) . "' )
 ) AS subquery
 WHERE product_or_variation_id != 0
 		"
-			); // WPCS: unprepared SQL ok.
+			); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		} else {
 			// HPOS: no, Lookup table: no.
 			// phpcs:disable WordPress.DB.PreparedSQL.NotPrepared

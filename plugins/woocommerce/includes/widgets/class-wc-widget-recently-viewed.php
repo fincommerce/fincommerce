@@ -78,7 +78,7 @@ class WC_Widget_Recently_Viewed extends WC_Widget {
 					'terms'    => ProductStockStatus::OUT_OF_STOCK,
 					'operator' => 'NOT IN',
 				),
-			); // WPCS: slow query ok.
+			); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query
 		}
 
 		$r = new WP_Query( apply_filters( 'woocommerce_recently_viewed_products_widget_query_args', $query_args ) );
@@ -107,6 +107,6 @@ class WC_Widget_Recently_Viewed extends WC_Widget {
 
 		$content = ob_get_clean();
 
-		echo $content; // WPCS: XSS ok.
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

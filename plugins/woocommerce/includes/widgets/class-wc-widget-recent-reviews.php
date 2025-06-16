@@ -65,7 +65,7 @@ class WC_Widget_Recent_Reviews extends WC_Widget {
 				'post_type'   => 'product',
 				'parent'      => 0,
 			)
-		); // WPCS: override ok.
+		); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		if ( $comments ) {
 			$this->widget_start( $args, $instance );
@@ -90,7 +90,7 @@ class WC_Widget_Recent_Reviews extends WC_Widget {
 
 		$content = ob_get_clean();
 
-		echo $content; // WPCS: XSS ok.
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		$this->cache_widget( $args, $content );
 	}

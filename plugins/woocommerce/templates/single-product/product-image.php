@@ -52,9 +52,9 @@ $wrapper_classes   = apply_filters(
 			$html             .= '</div>';
 		}
 
-		echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', $html, $post_thumbnail_id ); // phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
+		echo apply_filters( 'woocommerce_single_product_image_thumbnail_html', $html, $post_thumbnail_id ); // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped, WooCommerce.Commenting.CommentHooks.MissingHookComment
 
-		do_action( 'woocommerce_product_thumbnails' );
+		do_action( 'woocommerce_product_thumbnails' ); // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
 		?>
 	</div>
 </div>

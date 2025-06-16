@@ -86,8 +86,8 @@ class Settings extends \WC_REST_Data_Controller {
 
 		try {
 			// Get current tab/section and set global variables.
-			$current_tab     = empty( $params['tab'] ) ? 'general' : sanitize_title( wp_unslash( $params['tab'] ) ); // WPCS: input var okay, CSRF ok.
-			$current_section = empty( $params['section'] ) ? '' : sanitize_title( wp_unslash( $params['section'] ) ); // WPCS: input var okay, CSRF ok.
+			$current_tab     = empty( $params['tab'] ) ? 'general' : sanitize_title( wp_unslash( $params['tab'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
+			$current_section = empty( $params['section'] ) ? '' : sanitize_title( wp_unslash( $params['section'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
 
 			$filter_name = '' === $current_section ?
 			"woocommerce_save_settings_{$current_tab}" :
@@ -100,7 +100,7 @@ class Settings extends \WC_REST_Data_Controller {
 			 *
 			 * @param bool $save Whether to save settings.
 			 */
-			if ( apply_filters( $filter_name, ! empty( $_POST['save'] ) ) ) { // WPCS: input var okay, CSRF ok.
+			if ( apply_filters( $filter_name, ! empty( $_POST['save'] ) ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing
 				WC_Admin_Settings::save();
 			}
 

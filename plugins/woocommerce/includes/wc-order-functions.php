@@ -1199,7 +1199,7 @@ function wc_get_order_notes( $args ) {
 
 	// Set WooCommerce order type.
 	if ( isset( $args['type'] ) && 'customer' === $args['type'] ) {
-		$args['meta_query'] = array( // WPCS: slow query ok.
+		$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			array(
 				'key'     => 'is_customer_note',
 				'value'   => 1,
@@ -1207,7 +1207,7 @@ function wc_get_order_notes( $args ) {
 			),
 		);
 	} elseif ( isset( $args['type'] ) && 'internal' === $args['type'] ) {
-		$args['meta_query'] = array( // WPCS: slow query ok.
+		$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 			array(
 				'key'     => 'is_customer_note',
 				'compare' => 'NOT EXISTS',

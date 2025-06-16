@@ -56,7 +56,7 @@ class WC_Product_Variable_Data_Store_CPT extends WC_Product_Data_Store_CPT imple
 
 					$old_slug      = 'attribute_' . $meta_attribute_key;
 					$new_slug      = 'attribute_' . sanitize_title( $meta_value['name'] );
-					$old_meta_rows = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s;", $old_slug ) ); // WPCS: db call ok, cache ok.
+					$old_meta_rows = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s;", $old_slug ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching db call ok, cache ok.
 
 					if ( $old_meta_rows ) {
 						foreach ( $old_meta_rows as $old_meta_row ) {

@@ -47,7 +47,7 @@ class WC_REST_Order_Notes_V2_Controller extends WC_REST_Order_Notes_V1_Controlle
 
 		// Allow filter by order note type.
 		if ( 'customer' === $request['type'] ) {
-			$args['meta_query'] = array( // WPCS: slow query ok.
+			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				array(
 					'key'     => 'is_customer_note',
 					'value'   => 1,
@@ -55,7 +55,7 @@ class WC_REST_Order_Notes_V2_Controller extends WC_REST_Order_Notes_V1_Controlle
 				),
 			);
 		} elseif ( 'internal' === $request['type'] ) {
-			$args['meta_query'] = array( // WPCS: slow query ok.
+			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				array(
 					'key'     => 'is_customer_note',
 					'compare' => 'NOT EXISTS',

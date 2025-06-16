@@ -134,7 +134,7 @@ class DataStore extends ReportsDataStore implements DataStoreInterface {
 			$query           .= $wpdb->prepare( " WHERE tax_rate_id IN ({$tax_placeholders})", $args['include'] );
 			/* phpcs:enable */
 		}
-		return $wpdb->get_results( $query, ARRAY_A ); // WPCS: cache ok, DB call ok, unprepared SQL ok.
+		return $wpdb->get_results( $query, ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 	}
 
 	/**

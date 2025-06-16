@@ -479,15 +479,15 @@ class WC_Install {
 	 * This function is hooked into admin_init to affect admin only.
 	 */
 	public static function install_actions() {
-		if ( ! empty( $_GET['do_update_woocommerce'] ) ) { // WPCS: input var ok.
+		if ( ! empty( $_GET['do_update_woocommerce'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			check_admin_referer( 'wc_db_update', 'wc_db_update_nonce' );
 			wc_get_logger()->info( 'Manual database update triggered.', array( 'source' => 'wc-updater' ) );
 			self::update();
 			WC_Admin_Notices::add_notice( 'update', true );
 
-			if ( ! empty( $_GET['return_url'] ) ) { // WPCS: input var ok.
+			if ( ! empty( $_GET['return_url'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 				$return_url = esc_url_raw( wp_unslash( $_GET['return_url'] ) );
-				wp_safe_redirect( $return_url ); // WPCS: input var ok.
+				wp_safe_redirect( $return_url ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
 		}
 	}

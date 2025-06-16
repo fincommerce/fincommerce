@@ -108,7 +108,7 @@ class WC_Widget_Products extends WC_Widget {
 			'tax_query'      => array(
 				'relation' => 'AND',
 			),
-		); // WPCS: slow query ok.
+		); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query
 
 		if ( empty( $instance['show_hidden'] ) ) {
 			$query_args['tax_query'][] = array(
@@ -137,7 +137,7 @@ class WC_Widget_Products extends WC_Widget {
 					'terms'    => $product_visibility_term_ids[ ProductStockStatus::OUT_OF_STOCK ],
 					'operator' => 'NOT IN',
 				),
-			); // WPCS: slow query ok.
+			); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query
 		}
 
 		switch ( $show ) {
@@ -160,14 +160,14 @@ class WC_Widget_Products extends WC_Widget {
 				$query_args['orderby'] = 'menu_order';
 				break;
 			case 'price':
-				$query_args['meta_key'] = '_price'; // WPCS: slow query ok.
+				$query_args['meta_key'] = '_price'; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				$query_args['orderby']  = 'meta_value_num';
 				break;
 			case 'rand':
 				$query_args['orderby'] = 'rand';
 				break;
 			case 'sales':
-				$query_args['meta_key'] = 'total_sales'; // WPCS: slow query ok.
+				$query_args['meta_key'] = 'total_sales'; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				$query_args['orderby']  = 'meta_value_num';
 				break;
 			default:
@@ -217,6 +217,6 @@ class WC_Widget_Products extends WC_Widget {
 
 		wp_reset_postdata();
 
-		echo $this->cache_widget( $args, ob_get_clean() ); // WPCS: XSS ok.
+		echo $this->cache_widget( $args, ob_get_clean() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 }

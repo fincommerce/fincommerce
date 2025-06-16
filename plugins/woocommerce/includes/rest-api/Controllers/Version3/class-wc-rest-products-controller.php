@@ -295,9 +295,9 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		// Build tax_query if taxonomies are set.
 		if ( ! empty( $tax_query ) ) {
 			if ( ! empty( $args['tax_query'] ) ) {
-				$args['tax_query'] = array_merge( $tax_query, $args['tax_query'] ); // WPCS: slow query ok.
+				$args['tax_query'] = array_merge( $tax_query, $args['tax_query'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 			} else {
-				$args['tax_query'] = $tax_query; // WPCS: slow query ok.
+				$args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 			}
 		}
 
@@ -339,7 +339,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 					$skus[] = $request['sku'];
 				}
 
-				$args['meta_query'] = $this->add_meta_query( // WPCS: slow query ok.
+				$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 					$args,
 					array(
 						'key'     => '_sku',
@@ -364,7 +364,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		// Filter by tax class.
 		if ( ! empty( $request['tax_class'] ) ) {
-			$args['meta_query'] = $this->add_meta_query( // WPCS: slow query ok.
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
 				array(
 					'key'   => '_tax_class',
@@ -375,12 +375,12 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 
 		// Price filter.
 		if ( ! empty( $request['min_price'] ) || ! empty( $request['max_price'] ) ) {
-			$args['meta_query'] = $this->add_meta_query( $args, wc_get_min_max_price_meta_query( $request ) );  // WPCS: slow query ok.
+			$args['meta_query'] = $this->add_meta_query( $args, wc_get_min_max_price_meta_query( $request ) );  // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 		}
 
 		// Filter product by stock_status.
 		if ( ! empty( $request['stock_status'] ) ) {
-			$args['meta_query'] = $this->add_meta_query( // WPCS: slow query ok.
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
 				array(
 					'key'   => '_stock_status',
@@ -411,7 +411,7 @@ class WC_REST_Products_Controller extends WC_REST_Products_V2_Controller {
 		$args['orderby'] = $ordering_args['orderby'];
 		$args['order']   = $ordering_args['order'];
 		if ( $ordering_args['meta_key'] ) {
-			$args['meta_key'] = $ordering_args['meta_key']; // WPCS: slow query ok.
+			$args['meta_key'] = $ordering_args['meta_key']; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 		}
 
 		/*

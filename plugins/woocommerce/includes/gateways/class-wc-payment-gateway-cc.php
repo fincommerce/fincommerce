@@ -86,7 +86,7 @@ class WC_Payment_Gateway_CC extends WC_Payment_Gateway {
 			<?php do_action( 'woocommerce_credit_card_form_start', $this->id ); ?>
 			<?php
 			foreach ( $fields as $field ) {
-				echo $field; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+				echo $field; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 			?>
 			<?php do_action( 'woocommerce_credit_card_form_end', $this->id ); ?>
@@ -95,7 +95,7 @@ class WC_Payment_Gateway_CC extends WC_Payment_Gateway {
 		<?php
 
 		if ( $this->supports( PaymentGatewayFeature::CREDIT_CARD_FORM_CVC_ON_SAVED_METHOD ) ) {
-			echo '<fieldset>' . $cvc_field . '</fieldset>'; // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+			echo '<fieldset>' . $cvc_field . '</fieldset>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 }

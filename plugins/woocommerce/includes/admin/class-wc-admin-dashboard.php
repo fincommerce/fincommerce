@@ -218,7 +218,7 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 							/* translators: %s: net sales */
 							esc_html__( '%s net sales this month', 'woocommerce' ),
 							'<strong>' . wc_price( $report_data->net_sales ) . '</strong>'
-						); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+						); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 					</a>
 				</li>
@@ -239,7 +239,7 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 							esc_html__( '%1$s top seller this month (sold %2$d)', 'woocommerce' ),
 							'<strong>' . get_the_title( $top_seller->product_id ) . '</strong>',
 							$top_seller->qty
-						); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+						); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					?>
 					</a>
 				</li>
@@ -288,7 +288,7 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 						/* translators: %s: order count */
 						_n( '<strong>%s order</strong> awaiting processing', '<strong>%s orders</strong> awaiting processing', $processing_count, 'woocommerce' ),
 						$processing_count
-					); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+					); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 				</a>
 			</li>
@@ -299,7 +299,7 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 						/* translators: %s: order count */
 						_n( '<strong>%s order</strong> on-hold', '<strong>%s orders</strong> on-hold', $on_hold_count, 'woocommerce' ),
 						$on_hold_count
-					); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+					); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 				</a>
 			</li>
@@ -393,7 +393,7 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 						/* translators: %s: order count */
 						_n( '<strong>%s product</strong> low in stock', '<strong>%s products</strong> low in stock', $lowinstock_count, 'woocommerce' ),
 						$lowinstock_count
-					); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+					); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 				</a>
 			</li>
@@ -404,7 +404,7 @@ if ( ! class_exists( 'WC_Admin_Dashboard', false ) ) :
 						/* translators: %s: order count */
 						_n( '<strong>%s product</strong> out of stock', '<strong>%s products</strong> out of stock', $outofstock_count, 'woocommerce' ),
 						$outofstock_count
-					); // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+					); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 				</a>
 			</li>

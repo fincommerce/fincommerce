@@ -612,14 +612,14 @@ class WC_Emails {
 
 				foreach ( $fields as $field ) {
 					if ( isset( $field['label'], $field['value'] ) && $field['value'] ) {
-						echo wp_kses_post( $field['label'] . ': ' . $field['value'] ) . "\n"; // WPCS: XSS ok.
+						echo wp_kses_post( $field['label'] . ': ' . $field['value'] ) . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					}
 				}
 			} else {
 
 				foreach ( $fields as $field ) {
 					if ( isset( $field['label'], $field['value'] ) && $field['value'] ) {
-						echo '<p><strong>' . wp_kses_post( $field['label'] ) . ':</strong> ' . wp_kses_post( $field['value'] ) . '</p>'; // WPCS: XSS ok.
+						echo '<p><strong>' . wp_kses_post( $field['label'] ) . ':</strong> ' . wp_kses_post( $field['value'] ) . '</p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					}
 				}
 			}

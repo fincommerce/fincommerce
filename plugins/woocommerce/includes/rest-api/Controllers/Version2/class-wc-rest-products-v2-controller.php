@@ -270,7 +270,7 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 		}
 
 		if ( ! empty( $tax_query ) ) {
-			$args['tax_query'] = $tax_query; // WPCS: slow query ok.
+			$args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		}
 
 		// Filter featured.
@@ -291,7 +291,7 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 				$skus[] = $request['sku'];
 			}
 
-			$args['meta_query'] = $this->add_meta_query( // WPCS: slow query ok.
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
 				array(
 					'key'     => '_sku',
@@ -303,7 +303,7 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 
 		// Filter by tax class.
 		if ( ! empty( $request['tax_class'] ) ) {
-			$args['meta_query'] = $this->add_meta_query( // WPCS: slow query ok.
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
 				array(
 					'key'   => '_tax_class',
@@ -314,12 +314,12 @@ class WC_REST_Products_V2_Controller extends WC_REST_CRUD_Controller {
 
 		// Price filter.
 		if ( ! empty( $request['min_price'] ) || ! empty( $request['max_price'] ) ) {
-			$args['meta_query'] = $this->add_meta_query( $args, wc_get_min_max_price_meta_query( $request ) );  // WPCS: slow query ok.
+			$args['meta_query'] = $this->add_meta_query( $args, wc_get_min_max_price_meta_query( $request ) );  // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 		}
 
 		// Filter product in stock or out of stock.
 		if ( is_bool( $request['in_stock'] ) ) {
-			$args['meta_query'] = $this->add_meta_query( // WPCS: slow query ok.
+			$args['meta_query'] = $this->add_meta_query( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				$args,
 				array(
 					'key'   => '_stock_status',

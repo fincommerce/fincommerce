@@ -71,7 +71,7 @@ class WC_Widget_Top_Rated_Products extends WC_Widget {
 				'meta_query'     => WC()->query->get_meta_query(),
 				'tax_query'      => WC()->query->get_tax_query(),
 			)
-		); // WPCS: slow query ok.
+		); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query
 
 		$r = new WP_Query( $query_args );
 
@@ -100,7 +100,7 @@ class WC_Widget_Top_Rated_Products extends WC_Widget {
 
 		$content = ob_get_clean();
 
-		echo $content; // WPCS: XSS ok.
+		echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		$this->cache_widget( $args, $content );
 	}

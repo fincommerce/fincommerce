@@ -44,8 +44,8 @@ class WC_REST_Report_Reviews_Totals_Controller extends WC_REST_Reports_Controlle
 		$query_data = array(
 			'count'      => true,
 			'post_type'  => 'product',
-			'meta_key'   => 'rating', // WPCS: slow query ok.
-			'meta_value' => '', // WPCS: slow query ok.
+			'meta_key'   => 'rating', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			'meta_value' => '', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 		);
 
 		for ( $i = 1; $i <= 5; $i++ ) {
