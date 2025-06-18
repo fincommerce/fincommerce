@@ -1,0 +1,5 @@
+Significance: patch
+Type: fix
+Comment: Undefined array key "" in src/StoreApi/Utilities/PaymentUtils.php
+
+

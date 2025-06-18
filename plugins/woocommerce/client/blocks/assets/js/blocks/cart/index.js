@@ -10,17 +10,18 @@ import { registerBlockType, createBlock } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { Edit, Save } from './edit';
 import './style.scss';
-import { blockName, blockAttributes } from './attributes';
+import { blockAttributes as attrs } from './attributes';
 import './inner-blocks';
+
+const blockAttributes  = { ...metadata.attributes, ...attrs };
 
 /**
  * Register and run the Cart block.
  */
 const settings = {
-	title: __( 'Cart', 'woocommerce' ),
-	apiVersion: 3,
 	icon: {
 		src: (
 			<Icon
@@ -28,20 +29,6 @@ const settings = {
 				className="wc-block-editor-components-block-icon"
 			/>
 		),
-	},
-	category: 'woocommerce',
-	keywords: [ __( 'WooCommerce', 'woocommerce' ) ],
-	description: __( 'Shopping cart.', 'woocommerce' ),
-	supports: {
-		align: [ 'wide' ],
-		html: false,
-		multiple: false,
-	},
-	example: {
-		attributes: {
-			isPreview: true,
-		},
-		viewportWidth: 800,
 	},
 	attributes: blockAttributes,
 	edit: Edit,
@@ -126,4 +113,4 @@ const settings = {
 	],
 };
 
-registerBlockType( blockName, settings );
+registerBlockType( metadata.name, settings );
