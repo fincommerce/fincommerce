@@ -3060,6 +3060,14 @@ function wc_update_990_remove_email_notes() {
 }
 
 /**
+ * Remove DB options as a consequence of baking in the new Payments Settings page.
+ */
+function wc_update_990_remove_reactify_classic_payments_settings_feature_options() {
+	delete_option( 'woocommerce_feature_reactify-classic-payments-settings_enabled' );
+	delete_option( 'woocommerce_pre_install_woocommerce_payments_promotion_settings' );
+}
+
+/**
  * Remove the transient ptk_patterns.
  * This was used to store the Patterns Toolkit patterns in the database.
  * The patterns are now stored in the option ptk_patterns.
@@ -3068,4 +3076,14 @@ function wc_update_990_remove_email_notes() {
  */
 function wc_update_1000_remove_patterns_toolkit_transient() {
 	delete_transient( 'ptk_patterns' );
+}
+
+/**
+ * Remove DB entries used by the Payments Gateway Suggestions feature.
+ *
+ * @return void
+ */
+function wc_update_1010_cleanup_payment_gateway_suggestions_db_entries() {
+	delete_option( 'woocommerce_setting_payments_recommendations_hidden' );
+	delete_transient( 'woocommerce_admin_payment_gateway_suggestions_specs' );
 }

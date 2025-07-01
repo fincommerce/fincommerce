@@ -7,7 +7,6 @@ namespace Automattic\WooCommerce\Admin\Features\OnboardingTasks;
 
 use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Admin\Features\OnboardingTasks\Tasks\ReviewShippingOptions;
-use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 /**
  * Task Lists class.
@@ -45,7 +44,6 @@ class TaskLists {
 	const DEFAULT_TASKS = array(
 		'StoreDetails',
 		'Products',
-		'WooCommercePayments',
 		'Payments',
 		'Tax',
 		'Shipping',

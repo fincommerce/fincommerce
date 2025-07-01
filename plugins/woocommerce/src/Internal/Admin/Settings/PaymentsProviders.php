@@ -1197,8 +1197,10 @@ class PaymentsProviders {
 				$gateway_details['_incentive'] = $suggestion['_incentive'];
 			}
 
-			// Attach the suggestion ID to the gateway details so we can reference it with precision.
-			$gateway_details['_suggestion_id'] = $suggestion['id'];
+			// Attach the suggestion ID and suggestion category ID to the gateway details
+			// so we can reference it with precision.
+			$gateway_details['_suggestion_id']          = $suggestion['id'];
+			$gateway_details['_suggestion_category_id'] = $suggestion['category'];
 		}
 
 		// Get the gateway's corresponding plugin details.
@@ -1261,7 +1263,8 @@ class PaymentsProviders {
 		// Determine the category of the extension.
 		switch ( $extension_suggestion['_type'] ) {
 			case ExtensionSuggestions::TYPE_PSP:
-				$extension_suggestion['category'] = self::CATEGORY_PSP;
+			case ExtensionSuggestions::TYPE_APM:
+				$extension['category'] = self::CATEGORY_PSP;
 				break;
 			case ExtensionSuggestions::TYPE_EXPRESS_CHECKOUT:
 				$extension_suggestion['category'] = self::CATEGORY_EXPRESS_CHECKOUT;

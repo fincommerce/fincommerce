@@ -27,20 +27,16 @@ use Automattic\WooCommerce\Internal\Admin\Notes\NewSalesRecord;
 use Automattic\WooCommerce\Internal\Admin\Notes\OnboardingPayments;
 use Automattic\WooCommerce\Internal\Admin\Notes\OnlineClothingStore;
 use Automattic\WooCommerce\Internal\Admin\Notes\OrderMilestones;
-use Automattic\WooCommerce\Internal\Admin\Notes\PaymentsMoreInfoNeeded;
-use Automattic\WooCommerce\Internal\Admin\Notes\PaymentsRemindMeLater;
 use Automattic\WooCommerce\Internal\Admin\Notes\PerformanceOnMobile;
 use Automattic\WooCommerce\Internal\Admin\Notes\PersonalizeStore;
 use Automattic\WooCommerce\Internal\Admin\Notes\RealTimeOrderAlerts;
 use Automattic\WooCommerce\Internal\Admin\Notes\SellingOnlineCourses;
 use Automattic\WooCommerce\Internal\Admin\Notes\TrackingOptIn;
 use Automattic\WooCommerce\Internal\Admin\Notes\UnsecuredReportFiles;
-use Automattic\WooCommerce\Internal\Admin\Notes\WooCommercePayments;
 use Automattic\WooCommerce\Internal\Admin\Notes\WooCommerceSubscriptions;
 use Automattic\WooCommerce\Internal\Admin\Notes\WooSubscriptionsNotes;
 use Automattic\WooCommerce\Internal\Admin\Schedulers\MailchimpScheduler;
 use Automattic\WooCommerce\Admin\Notes\Note;
-use Automattic\WooCommerce\Admin\Features\PaymentGatewaySuggestions\PaymentGatewaySuggestionsDataSourcePoller;
 use Automattic\WooCommerce\Internal\Admin\RemoteFreeExtensions\RemoteFreeExtensionsDataSourcePoller;
 
 /**
@@ -82,13 +78,10 @@ class Events {
 		NewSalesRecord::class,
 		OnboardingPayments::class,
 		OnlineClothingStore::class,
-		PaymentsMoreInfoNeeded::class,
-		PaymentsRemindMeLater::class,
 		PerformanceOnMobile::class,
 		PersonalizeStore::class,
 		RealTimeOrderAlerts::class,
 		TrackingOptIn::class,
-		WooCommercePayments::class,
 		WooCommerceSubscriptions::class,
 	);
 
@@ -200,8 +193,7 @@ class Events {
 	 * Deletes notes that should be deleted.
 	 */
 	protected function possibly_delete_notes() {
-		PaymentsRemindMeLater::delete_if_not_applicable();
-		PaymentsMoreInfoNeeded::delete_if_not_applicable();
+		// No notes to delete, at least for now.
 	}
 
 	/**
@@ -252,15 +244,10 @@ class Events {
 
 	/**
 	 *   Refresh transient for the following DataSourcePollers on wc_admin_daily cron job.
-	 *   - PaymentGatewaySuggestionsDataSourcePoller
 	 *   - RemoteFreeExtensionsDataSourcePoller
 	 */
 	protected function possibly_refresh_data_source_pollers() {
 		$completed_tasks = get_option( 'woocommerce_task_list_tracked_completed_tasks', array() );
-
-		if ( ! in_array( 'payments', $completed_tasks, true ) && ! in_array( 'woocommerce-payments', $completed_tasks, true ) ) {
-			PaymentGatewaySuggestionsDataSourcePoller::get_instance()->read_specs_from_data_sources();
-		}
 
 		if ( ! in_array( 'store_details', $completed_tasks, true ) && ! in_array( 'marketing', $completed_tasks, true ) ) {
 			RemoteFreeExtensionsDataSourcePoller::get_instance()->read_specs_from_data_sources();

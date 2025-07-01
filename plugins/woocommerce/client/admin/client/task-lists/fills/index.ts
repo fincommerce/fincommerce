@@ -2,12 +2,10 @@
  * Internal dependencies
  */
 import { isImportProduct } from './utils';
-import './PaymentGatewaySuggestions';
 import './shipping';
 import './Marketing';
 import './appearance';
 import './tax';
-import './woocommerce-payments';
 import './deprecated-tasks';
 import './launch-your-store';
 

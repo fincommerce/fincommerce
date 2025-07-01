@@ -12,10 +12,6 @@ const { Slot } = createSlotFill( SETTINGS_SLOT_FILL_CONSTANT );
 
 export const possiblyRenderSettingsSlots = () => {
 	const slots = [
-		{
-			id: 'wc_payments_settings_slotfill',
-			scope: 'woocommerce-payments-settings',
-		},
 		{ id: 'wc_tax_settings_slotfill', scope: 'woocommerce-tax-settings' },
 		{ id: 'wc_settings_slotfill', scope: 'woocommerce-settings' },
 		{

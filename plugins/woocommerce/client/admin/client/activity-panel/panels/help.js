@@ -105,64 +105,6 @@ function getMarketingItems( props ) {
 	].filter( Boolean );
 }
 
-function getPaymentGatewaySuggestions( props ) {
-	const { paymentGatewaySuggestions } = props;
-
-	return [
-		{
-			title: __( 'Which Payment Option is Right for Me?', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/premium-payment-gateway-extensions/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions.woocommerce_payments && {
-			title: __( 'WooPayments Start Up Guide', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/payments/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions.woocommerce_payments && {
-			title: __( 'WooPayments FAQs', 'woocommerce' ),
-			link: 'https://woocommerce.com/documentation/woocommerce-payments/woocommerce-payments-faqs/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions.stripe && {
-			title: __( 'Stripe Setup and Configuration', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/stripe/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions[ 'ppcp-gateway' ] && {
-			title: __(
-				'PayPal Checkout Setup and Configuration',
-				'woocommerce'
-			),
-			link: 'https://woocommerce.com/document/2-0/woocommerce-paypal-payments/?utm_medium=product#section-3',
-		},
-		paymentGatewaySuggestions.square_credit_card && {
-			title: __( 'Square - Get started', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/woocommerce-square/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions.kco && {
-			title: __( 'Klarna - Introduction', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/klarna-checkout/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions.klarna_payments && {
-			title: __( 'Klarna - Introduction', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/klarna-payments/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions.payfast && {
-			title: __( 'Payfast Setup and Configuration', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/payfast-payment-gateway/?utm_source=help_panel&utm_medium=product',
-		},
-		paymentGatewaySuggestions.eway && {
-			title: __( 'Eway Setup and Configuration', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/eway/?utm_source=help_panel&utm_medium=product',
-		},
-		{
-			title: __( 'Direct Bank Transfer (BACS)', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/bacs/?utm_source=help_panel&utm_medium=product',
-		},
-		{
-			title: __( 'Cash on Delivery', 'woocommerce' ),
-			link: 'https://woocommerce.com/document/cash-on-delivery/?utm_source=help_panel&utm_medium=product',
-		},
-	].filter( Boolean );
-}
-
 function getProductsItems() {
 	return [
 		{
@@ -278,8 +220,6 @@ function getItems( props ) {
 			return getShippingItems( props );
 		case 'tax':
 			return getTaxItems( props );
-		case 'payments':
-			return getPaymentGatewaySuggestions( props );
 		case 'marketing':
 			return getMarketingItems( props );
 		default:
@@ -391,13 +331,6 @@ export default compose(
 		const { getActivePlugins } = select( pluginsStore );
 		const { general: generalSettings = {} } = getSettings( 'general' );
 		const activePlugins = getActivePlugins();
-		const paymentGatewaySuggestions = select( onboardingStore )
-			.getPaymentGatewaySuggestions()
-			.reduce( ( suggestions, suggestion ) => {
-				const { id } = suggestion;
-				suggestions[ id ] = true;
-				return suggestions;
-			}, {} );
 		const taskLists = select( onboardingStore ).getTaskLists();
 
 		const countryCode = getCountryCode(
@@ -407,7 +340,6 @@ export default compose(
 		return {
 			activePlugins,
 			countryCode,
-			paymentGatewaySuggestions,
 			taskLists,
 		};
 	} )

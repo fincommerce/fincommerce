@@ -289,6 +289,7 @@ class WC_Install {
 		'9.9.0'  => array(
 			'wc_update_990_remove_wc_count_comments_transient',
 			'wc_update_990_remove_email_notes',
+			'wc_update_990_remove_reactify_classic_payments_settings_feature_options',
 		),
 		'10.0.0' => array(
 			'wc_update_1000_multisite_visibility_setting',
@@ -1218,6 +1219,9 @@ class WC_Install {
 			'wc-admin-deactivate-plugin',
 			'wc-admin-complete-store-details',
 			'wc-admin-choosing-a-theme',
+			'wc-admin-payments-more-info-needed',
+			'wc-admin-payments-remind-me-later',
+			'wc-admin-woocommerce-payments',
 		);
 
 		/**

@@ -12,11 +12,11 @@ export const EmbedHeader = ( {
 	sections: string[];
 	query: Record< string, string >;
 } ) => {
-	const isReactifyPaymentsSettingsScreen = Boolean(
+	const isPaymentsSettingsScreen = Boolean(
 		query?.page === 'wc-settings' && query?.tab === 'checkout'
 	);
 	const showReminderBar = Boolean(
-		isTaskListActive( 'setup' ) && ! isReactifyPaymentsSettingsScreen
+		isTaskListActive( 'setup' ) && ! isPaymentsSettingsScreen
 	);
 
 	return (

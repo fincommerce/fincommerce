@@ -23,24 +23,6 @@ jest.mock( '@woocommerce/data', () => ( {
 		currentUserCan: jest.fn(),
 	} ),
 } ) );
-jest.mock( '../../payments', () => ( {
-	PaymentRecommendations: ( {
-		page,
-		tab,
-		section,
-	}: {
-		page: string;
-		tab: string;
-		section?: string;
-	} ) => (
-		<div>
-			payment_recommendations
-			<span>page:{ page }</span>
-			<span>tab:{ tab }</span>
-			<span>section:{ section || '' }</span>
-		</div>
-	),
-} ) );
 
 const stubLocation = ( location: string ) => {
 	jest.spyOn( window, 'location', 'get' ).mockReturnValue( {
@@ -54,7 +36,6 @@ describe( 'Embedded layout', () => {
 		stubLocation( '?page=settings&tab=test' );
 		const { queryByText } = render( <EmbeddedBodyLayout /> );
 
-		expect( queryByText( 'payment_recommendations' ) ).toBeInTheDocument();
 		expect( queryByText( 'page:settings' ) ).toBeInTheDocument();
 		expect( queryByText( 'tab:test' ) ).toBeInTheDocument();
 		expect( queryByText( 'section:' ) ).toBeInTheDocument();

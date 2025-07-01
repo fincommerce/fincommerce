@@ -74,7 +74,6 @@ class Init {
 				'Automattic\WooCommerce\Admin\API\MarketingCampaignTypes',
 				'Automattic\WooCommerce\Admin\API\Options',
 				'Automattic\WooCommerce\Admin\API\Settings',
-				'Automattic\WooCommerce\Admin\API\PaymentGatewaySuggestions',
 				'Automattic\WooCommerce\Admin\API\Themes',
 				'Automattic\WooCommerce\Admin\API\Plugins',
 				'Automattic\WooCommerce\Admin\API\OnboardingFreeExtensions',
@@ -142,7 +141,7 @@ class Init {
 					'Automattic\WooCommerce\Admin\API\Reports\Customers\Stats\Controller',
 				);
 
-				// The performance indicators controllerq must be registered last, after other /stats endpoints have been registered.
+				// The performance indicators controller must be registered last, after other /stats endpoints have been registered.
 				$analytics_controllers[] = 'Automattic\WooCommerce\Admin\API\Reports\PerformanceIndicators\Controller';
 
 				$analytics_controllers = array_merge( $analytics_controllers, $analytic_mu_controllers );

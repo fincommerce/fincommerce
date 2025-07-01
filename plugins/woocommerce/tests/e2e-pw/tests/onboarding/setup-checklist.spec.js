@@ -3,7 +3,7 @@
  */
 import { expect, tags, test as baseTest } from '../../fixtures/fixtures';
 import { ADMIN_STATE_PATH } from '../../playwright.config';
-import { WC_ADMIN_API_PATH, WC_API_PATH } from '../../utils/api-client';
+import { WC_ADMIN_API_PATH } from '../../utils/api-client';
 
 const test = baseTest.extend( {
 	storageState: ADMIN_STATE_PATH,
@@ -26,30 +26,6 @@ const test = baseTest.extend( {
 		await restApi.put(
 			`${ WC_ADMIN_API_PATH }/options`,
 			initialTaskListState.data
-		);
-	},
-
-	nonSupportedWooPaymentsCountryPage: async ( { page, restApi }, use ) => {
-		// Ensure store's base country location is a WooPayments non-supported country (e.g. AF).
-		// Otherwise, the WooPayments task page logic or WooPayments redirects will kick in.
-		const initialDefaultCountry = await restApi.get(
-			`${ WC_API_PATH }/settings/general/woocommerce_default_country`
-		);
-		await restApi.put(
-			`${ WC_API_PATH }/settings/general/woocommerce_default_country`,
-			{
-				value: 'AF',
-			}
-		);
-
-		await use( page );
-
-		// Reset the default country to its initial state.
-		await restApi.put(
-			`${ WC_API_PATH }/settings/general/woocommerce_default_country`,
-			{
-				value: initialDefaultCountry.data.value,
-			}
 		);
 	},
 } );
@@ -81,29 +57,6 @@ test(
 			).toBeHidden();
 			await expect( page.getByText( 'Store management' ) ).toBeVisible();
 		} );
-	}
-);
-
-test(
-	'Payments task list item links to Payments settings page',
-	{ tag: [ tags.NOT_E2E ] },
-	/**
-	 * @param {{ nonSupportedWooPaymentsCountryPage: import('@playwright/test').Page }} page
-	 */
-	async ( { nonSupportedWooPaymentsCountryPage } ) => {
-		await nonSupportedWooPaymentsCountryPage.goto(
-			'wp-admin/admin.php?page=wc-admin'
-		);
-		await nonSupportedWooPaymentsCountryPage
-			.locator( '.woocommerce-task-list__item' )
-			.filter( { hasText: 'Get paid' } )
-			.click();
-
-		await expect(
-			nonSupportedWooPaymentsCountryPage.locator(
-				'.woocommerce-layout__header-wrapper > h1'
-			)
-		).toHaveText( 'Settings' );
 	}
 );
 

@@ -109,10 +109,11 @@ class Payments {
 				}
 
 				// Change suggestion details to align it with a regular payment gateway.
-				$suggestion['_suggestion_id'] = $suggestion['id'];
-				$suggestion['id']             = $suggestion_order_map_id;
-				$suggestion['_type']          = PaymentsProviders::TYPE_SUGGESTION;
-				$suggestion['_order']         = $providers_order_map[ $suggestion_order_map_id ];
+				$suggestion['_suggestion_id']          = $suggestion['id'];
+				$suggestion['_suggestion_category_id'] = $suggestion['category'];
+				$suggestion['id']                      = $suggestion_order_map_id;
+				$suggestion['_type']                   = PaymentsProviders::TYPE_SUGGESTION;
+				$suggestion['_order']                  = $providers_order_map[ $suggestion_order_map_id ];
 				unset( $suggestion['_priority'] );
 
 				$payment_providers[] = $suggestion;
@@ -210,6 +211,19 @@ class Payments {
 	 */
 	public function get_payment_extension_suggestion_categories(): array {
 		return $this->providers->get_extension_suggestion_categories();
+	}
+
+	/**
+	 * Get the countries where a given payment extension is suggested.
+	 *
+	 * This is useful to determine the list of countries where a payment extension can be used.
+	 *
+	 * @param string $suggestion_id The ID of the payment extension suggestion.
+	 *
+	 * @return string[] The list of ISO 3166-1 alpha-2 country codes where the suggestion is available.
+	 */
+	public function get_payment_extension_suggestion_countries( string $suggestion_id ): array {
+		return $this->extension_suggestions->get_extension_countries( $suggestion_id );
 	}
 
 	/**
