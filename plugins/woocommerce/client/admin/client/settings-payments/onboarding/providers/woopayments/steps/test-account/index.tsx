@@ -16,10 +16,7 @@ import { navigateTo, getNewPath } from '@woocommerce/navigation';
 import WooPaymentsStepHeader from '../../components/header';
 import { useOnboardingContext } from '../../data/onboarding-context';
 import { WC_ASSET_URL } from '~/utils/admin-settings';
-import {
-	disableWooPaymentsTestAccount,
-	recordPaymentsOnboardingEvent,
-} from '~/settings-payments/utils';
+import { recordPaymentsOnboardingEvent } from '~/settings-payments/utils';
 import { WooPaymentsResetAccountModal } from '~/settings-payments/components/modals/woo-payments-reset-account-modal';
 import './style.scss';
 
@@ -98,7 +95,6 @@ const TestAccountStep = () => {
 		currentStep,
 		navigateToNextStep,
 		closeModal,
-		refreshStoreData,
 		setJustCompletedStepId,
 		sessionEntryPoint,
 		setSnackbar,
@@ -177,29 +173,20 @@ const TestAccountStep = () => {
 		useState( false );
 
 	const handleContinue = () => {
+		setIsContinueButtonLoading( true );
+
 		recordPaymentsOnboardingEvent( 'woopayments_onboarding_modal_click', {
 			step: currentStep?.id || 'unknown',
 			action: 'activate_payments',
 			source: sessionEntryPoint,
 		} );
 
-		setIsContinueButtonLoading( true );
-
-		// Disable test account and proceed to live KYC.
-		disableWooPaymentsTestAccount()
-			.then( () => {
-				setIsContinueButtonLoading( false );
-
-				// This will refresh the steps and move the modal to the next step.
-				navigateToNextStep();
-
-				return refreshStoreData();
-			} )
-			.catch( () => {
-				// Handle any errors that occur during the process.
-				setIsContinueButtonLoading( false );
-				// Error tracking is handled on the backend, so we don't need to do anything here.
-			} );
+		apiFetch( {
+			url: currentStep?.actions?.finish?.href,
+			method: 'POST',
+		} ).then( () => {
+			navigateToNextStep();
+		} );
 	};
 
 	const resetState = useCallback( () => {
