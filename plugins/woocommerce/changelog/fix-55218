@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+prevent transaction link from opening in a new tab

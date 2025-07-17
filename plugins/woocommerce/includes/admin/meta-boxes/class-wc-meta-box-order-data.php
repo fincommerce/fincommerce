@@ -245,7 +245,7 @@ class WC_Meta_Box_Order_Data {
 							if ( isset( $payment_gateways[ $payment_method ] ) ) {
 								$url = $payment_gateways[ $payment_method ]->get_transaction_url( $order );
 								if ( $url ) {
-									$to_add .= ' (<a href="' . esc_url( $url ) . '" target="_blank">' . esc_html( $transaction_id ) . '</a>)';
+									$to_add .= ' (<a href="' . esc_url( $url ) . '">' . esc_html( $transaction_id ) . '</a>)';
 								}
 							}
 
