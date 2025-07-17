@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import { getReportTableQuery, getRequestQuery } from './utils';
+import { ReportConfigs } from '../report-definitions/types';
 
 export type ReportItemsEndpoint =
 	| 'customers'
@@ -552,4 +553,5 @@ export type ReportState = {
 	stats: {
 		[ resourceName: string ]: ReportStatObject;
 	};
+	config: ReportConfigs;
 };

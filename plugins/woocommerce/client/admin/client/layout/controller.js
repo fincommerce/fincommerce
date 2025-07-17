@@ -88,6 +88,8 @@ export const getPages = () => {
 		[ '', getAdminSetting( 'woocommerceTranslation' ) ],
 	];
 
+	const reports = getReports();
+
 	pages.push( {
 		container: Homescreen,
 		path: '/',
@@ -145,7 +147,7 @@ export const getPages = () => {
 			container: AnalyticsReport,
 			path: '/analytics/:report',
 			breadcrumbs: ( { match } ) => {
-				const report = find( getReports(), {
+				const report = find( reports, {
 					report: match.params.report,
 				} );
 				if ( ! report ) {

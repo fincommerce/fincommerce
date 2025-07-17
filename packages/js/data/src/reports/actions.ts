@@ -11,6 +11,7 @@ import {
 	ReportItemObject,
 	ReportStatObject,
 } from './types';
+import { ReportSpecificConfig } from '../report-definitions/types';
 
 export function setReportItemsError(
 	endpoint: ReportItemsEndpoint,
@@ -68,9 +69,21 @@ export function setReportStatsError(
 	};
 }
 
+export function setReportConfig(
+	reportSlug: string,
+	configData: ReportSpecificConfig
+) {
+	return {
+		type: TYPES.SET_REPORT_CONFIG,
+		reportSlug,
+		configData,
+	} as const;
+}
+
 export type Action = ReturnType<
 	| typeof setReportItems
 	| typeof setReportItemsError
 	| typeof setReportStats
 	| typeof setReportStatsError
+	| typeof setReportConfig
 >;

@@ -14,6 +14,7 @@ const defaultState = {
 	items: {},
 	statErrors: {},
 	stats: {},
+	config: {},
 };
 
 describe( 'reports reducer', () => {

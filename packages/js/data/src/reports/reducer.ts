@@ -15,6 +15,7 @@ const initialState: ReportState = {
 	items: {},
 	statErrors: {},
 	stats: {},
+	config: {},
 };
 const reducer: Reducer< ReportState, Action > = (
 	state = initialState,
@@ -51,6 +52,14 @@ const reducer: Reducer< ReportState, Action > = (
 				statErrors: {
 					...state.statErrors,
 					[ action.resourceName ]: action.error,
+				},
+			};
+		case TYPES.SET_REPORT_CONFIG:
+			return {
+				...state,
+				config: {
+					...state.config,
+					[ action.reportSlug ]: action.configData,
 				},
 			};
 		default:

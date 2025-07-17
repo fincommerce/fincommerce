@@ -569,6 +569,16 @@ export function getReportTableQuery(
 }
 
 /**
+ * Get all the reports available for WooCommerce Admin.
+ *
+ * @return All the reports.
+ */
+export function getAllReports() {
+	const { getAllReports: getAllReportsSelector } = WPSelect( store );
+	return getAllReportsSelector();
+}
+
+/**
  * Returns table data needed to render a report page.
  *
  * @param {Object} options                  arguments
