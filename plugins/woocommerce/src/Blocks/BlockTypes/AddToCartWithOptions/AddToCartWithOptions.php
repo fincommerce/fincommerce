@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Automattic\WooCommerce\Blocks\BlockTypes\AddToCartWithOptions;
@@ -6,7 +7,6 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes\AddToCartWithOptions;
 use Automattic\WooCommerce\Blocks\BlockTypes\AbstractBlock;
 use Automattic\WooCommerce\Blocks\BlockTypes\EnableBlockJsonAssetsTrait;
 use Automattic\WooCommerce\Blocks\Package;
-use Automattic\WooCommerce\Admin\Features\Features;
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
 use Automattic\WooCommerce\Enums\ProductType;
 use Automattic\WooCommerce\Blocks\Utils\BlockTemplateUtils;
@@ -230,10 +230,26 @@ class AddToCartWithOptions extends AbstractBlock {
 						'attributes'   => $variation->get_variation_attributes(),
 						'is_in_stock'  => $variation->is_in_stock(),
 					);
-				}
-			}
+					$variation_quantity_contraints                = Utils::get_product_quantity_constraints( $variation );
 
-			if ( $product->is_type( 'grouped' ) ) {
+					wp_interactivity_state(
+						'woocommerce',
+						array(
+							'products' => array(
+								$product->get_id() => array(
+									'variations' => array(
+										$variation->get_id() => array(
+											'min'  => $variation_quantity_contraints['min'],
+											'max'  => $variation_quantity_contraints['max'],
+											'step' => $variation_quantity_contraints['step'],
+										),
+									),
+								),
+							),
+						)
+					);
+				}
+			} elseif ( $product->is_type( 'grouped' ) ) {
 				// Add context for purchasable child products.
 				$children_product_data = array();
 				foreach ( $product->get_children() as $child_product_id ) {
@@ -299,13 +315,13 @@ class AddToCartWithOptions extends AbstractBlock {
 			$hooks_after  = '';
 
 			/**
-			* Filter to disable the compatibility layer for the blockified templates.
-			*
-			* This hook allows to disable the compatibility layer for the blockified.
-			*
-			* @since 7.6.0
-			* @param boolean $is_disabled_compatibility_layer Whether the compatibility layer should be disabled.
-			*/
+			 * Filter to disable the compatibility layer for the blockified templates.
+			 *
+			 * This hook allows to disable the compatibility layer for the blockified.
+			 *
+			 * @since 7.6.0
+			 * @param boolean $is_disabled_compatibility_layer Whether the compatibility layer should be disabled.
+			 */
 			$is_disabled_compatibility_layer = apply_filters( 'woocommerce_disable_compatibility_layer', false );
 
 			if ( ! $is_disabled_compatibility_layer && ! Utils::is_not_purchasable_product( $product ) ) {
@@ -618,8 +634,7 @@ class AddToCartWithOptions extends AbstractBlock {
 					data-wp-class--is-success="state.isSuccess"
 					data-wp-class--is-info="state.isInfo"
 					data-wp-class--is-dismissible="context.notice.dismissible"
-					data-wp-bind--role="state.role"
-				>
+					data-wp-bind--role="state.role">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
 						<path data-wp-bind--d="state.iconPath"></path>
 					</svg>
@@ -630,15 +645,16 @@ class AddToCartWithOptions extends AbstractBlock {
 						data-wp-bind--hidden="!context.notice.dismissible"
 						class="wc-block-components-button wp-element-button wc-block-components-notice-banner__dismiss contained"
 						aria-label="<?php esc_attr_e( 'Dismiss this notice', 'woocommerce' ); ?>"
-						data-wp-on--click="actions.removeNotice"
-					>
+						data-wp-on--click="actions.removeNotice">
 						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 							<path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" />
 						</svg>
 					</button>
 				</div>
 			</template>
-			<?php echo $form_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			<?php
+			echo $form_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			?>
 		</div>
 		<?php
 		return ob_get_clean();

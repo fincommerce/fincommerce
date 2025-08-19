@@ -1,0 +1,4 @@
+Significance: minor
+Type: enhancement
+
+Improved add to cart button disable functionality by disabling it on cart product quantity reaching max stock value.

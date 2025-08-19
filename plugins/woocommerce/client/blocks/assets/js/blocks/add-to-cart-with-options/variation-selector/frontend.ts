@@ -2,7 +2,10 @@
  * External dependencies
  */
 import { store, getContext } from '@wordpress/interactivity';
-import { SelectedAttributes } from '@woocommerce/stores/woocommerce/cart';
+import {
+	SelectedAttributes,
+	Store as WooCommerce,
+} from '@woocommerce/stores/woocommerce/cart';
 import type { ChangeEvent } from 'react';
 import type { ProductDataStore } from '@woocommerce/stores/woocommerce/product-data';
 
@@ -13,6 +16,8 @@ import type {
 	AddToCartWithOptionsStore,
 	Context as AddToCartWithOptionsStoreContext,
 } from '../frontend';
+import { getProductData } from '../../../base/utils/get-product-data';
+
 import {
 	getMatchedVariation,
 	type AvailableVariation,
@@ -147,6 +152,12 @@ export type VariableProductAddToCartWithOptionsStore =
 		};
 	};
 
+const { state: wooState } = store< WooCommerce >(
+	'woocommerce',
+	{},
+	{ lock: universalLock }
+);
+
 const { actions, state } = store< VariableProductAddToCartWithOptionsStore >(
 	'woocommerce/add-to-cart-with-options',
 	{
@@ -156,17 +167,46 @@ const { actions, state } = store< VariableProductAddToCartWithOptionsStore >(
 				if ( ! context ) {
 					return true;
 				}
-				const { availableVariations, selectedAttributes } = context;
+				const {
+					availableVariations,
+					selectedAttributes,
+					quantity,
+					productId,
+					childProductId,
+					productType,
+				} = context;
 
-				const matchedVariation = getMatchedVariation(
+				const productObject = getProductData(
+					childProductId || productId,
+					productType,
 					availableVariations,
 					selectedAttributes
 				);
 
+				if ( ! productObject?.id ) {
+					return false;
+				}
+
+				const { max: productMaxCartQty, id } = productObject;
+
+				const cartItems = wooState.cart?.items ?? [];
+
+				if ( ! productMaxCartQty ) {
+					return true;
+				}
+
+				const variableProductQty =
+					cartItems.find( ( item ) => item.id === id )?.quantity || 0;
+				const maxCartQty = productMaxCartQty || 0;
+
+				// Returns form quantity selector component value.
+				const qty = quantity[ id ?? productId ];
+
 				// Variable products must be in stock and have a selected variation
 				return Boolean(
-					matchedVariation?.is_in_stock &&
-						matchedVariation?.variation_id
+					( ! maxCartQty ||
+						maxCartQty >= qty + variableProductQty ) &&
+						id
 				);
 			},
 			get variationId(): number | null {
