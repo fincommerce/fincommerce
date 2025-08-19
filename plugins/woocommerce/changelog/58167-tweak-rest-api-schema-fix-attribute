@@ -1,0 +1,4 @@
+Significance: patch
+Type: tweak
+
+Improved description of attribute_is and attribute_is_not API parameters.

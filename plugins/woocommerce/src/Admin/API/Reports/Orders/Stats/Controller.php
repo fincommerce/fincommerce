@@ -351,19 +351,25 @@ class Controller extends GenericStatsController {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['attribute_is']       = array(
-			'description'       => __( 'Limit result set to orders that include products with the specified attributes.', 'woocommerce' ),
+			'description'       => __( 'Limit result set to orders that include products with the specified attributes. The array is a tuple of attribute ID and term ID.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'array',
+				'items' => array(
+					'type' => 'integer',
+				),
 			),
 			'default'           => array(),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['attribute_is_not']   = array(
-			'description'       => __( 'Limit result set to orders that don\'t include products with the specified attributes.', 'woocommerce' ),
+			'description'       => __( 'Limit result set to orders that don\'t include products with the specified attributes. The array is a tuple of attribute ID and term ID.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'array',
+				'items' => array(
+					'type' => 'integer',
+				),
 			),
 			'default'           => array(),
 			'validate_callback' => 'rest_validate_request_arg',

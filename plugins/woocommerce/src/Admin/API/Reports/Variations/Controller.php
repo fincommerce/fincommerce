@@ -302,25 +302,31 @@ class Controller extends GenericController implements ExportableInterface {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['attribute_is']      = array(
-			'description'       => __( 'Limit result set to variations that include the specified attributes.', 'woocommerce' ),
+			'description'       => __( 'Limit result set to variations that include the specified attributes. The array is a tuple of attribute ID and term ID.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'array',
+				'items' => array(
+					'type' => 'integer',
+				),
 			),
 			'default'           => array(),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['attribute_is_not']  = array(
-			'description'       => __( 'Limit result set to variations that don\'t include the specified attributes.', 'woocommerce' ),
+			'description'       => __( 'Limit result set to variations that don\'t include the specified attributes. The array is a tuple of attribute ID and term ID.', 'woocommerce' ),
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'array',
+				'items' => array(
+					'type' => 'integer',
+				),
 			),
 			'default'           => array(),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['category_includes'] = array(
-			'description'       => __( 'Limit result set to variations in the specified categories.', 'woocommerce' ),
+			'description'       => __( 'Limit result set to variations in the specified categories. The array is a tuple of category ID and term ID.', 'woocommerce' ),
 			'type'              => 'array',
 			'sanitize_callback' => 'wp_parse_id_list',
 			'validate_callback' => 'rest_validate_request_arg',
@@ -329,7 +335,7 @@ class Controller extends GenericController implements ExportableInterface {
 			),
 		);
 		$params['category_excludes'] = array(
-			'description'       => __( 'Limit result set to variations not in the specified categories.', 'woocommerce' ),
+			'description'       => __( 'Limit result set to variations not in the specified categories. The array is a tuple of category ID and term ID.', 'woocommerce' ),
 			'type'              => 'array',
 			'sanitize_callback' => 'wp_parse_id_list',
 			'validate_callback' => 'rest_validate_request_arg',
