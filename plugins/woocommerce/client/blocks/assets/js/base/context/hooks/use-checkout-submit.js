@@ -54,8 +54,12 @@ export const useCheckoutSubmit = () => {
 	const waitingForRedirect = isComplete && ! hasError;
 	const paymentMethodButtonLabel = paymentMethod.placeOrderButtonLabel;
 
+	const paymentMethodPlaceOrderButton =
+		paymentMethod.placeOrderButton || null;
+
 	return {
 		paymentMethodButtonLabel,
+		paymentMethodPlaceOrderButton,
 		onSubmit,
 		isCalculating,
 		isDisabled: isProcessing || isExpressPaymentMethodActive,
