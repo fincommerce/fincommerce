@@ -1,15 +1,22 @@
 /**
  * External dependencies
  */
+import clsx from 'clsx';
 import {
 	useBlockProps,
+	// @ts-expect-error no exported member.
 	useInnerBlocksProps,
+	/* eslint-disable */
+	/* @ts-ignore module is exported as experimental */
 	__experimentalUseBorderProps as useBorderProps,
+	/* @ts-ignore module is exported as experimental */
 	__experimentalUseColorProps as useColorProps,
+	/* @ts-ignore module is exported as experimental */
 	__experimentalGetSpacingClassesAndStyles as useSpacingProps,
+	/* @ts-ignore module is exported as experimental */
 	__experimentalGetShadowClassesAndStyles as useShadowProps,
+	/* eslint-enable */
 } from '@wordpress/block-editor';
-import clsx from 'clsx';
 
 export default function Edit( { attributes } ) {
 	const { allowedBlocks, templateLock, openByDefault, isSelected } =

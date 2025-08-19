@@ -19,7 +19,7 @@ export * from './price-slider';
 export * from './product-list';
 export * from './product-name';
 export * from './product-price';
-export * from './product-rating';
+export { default as Rating } from './product-rating';
 export * from './quantity-selector';
 export * from './read-more';
 export * from './reviews';
