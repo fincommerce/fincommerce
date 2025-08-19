@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Use WP 6.8 wp_register_block_types_from_metadata_collection function to register Woo Blocks
