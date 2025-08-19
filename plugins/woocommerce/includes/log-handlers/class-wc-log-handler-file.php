@@ -6,6 +6,8 @@
  */
 
 use Automattic\Jetpack\Constants;
+use Automattic\WooCommerce\Internal\Admin\Logging\LogHandlerFileV2;
+use Automattic\WooCommerce\Internal\Admin\Logging\FileV2\FileController;
 use Automattic\WooCommerce\Utilities\LoggingUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Handles log entries by writing to a file.
+ *
+ * @deprecated 9.8.0 Use LogHandlerFileV2 instead.
  *
  * @class          WC_Log_Handler_File
  * @version        1.0.0
@@ -76,6 +80,8 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	/**
 	 * Handle a log entry.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @param int    $timestamp Log timestamp.
 	 * @param string $level emergency|alert|critical|error|warning|notice|info|debug.
 	 * @param string $message Log message.
@@ -90,6 +96,11 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	 * @return bool False if value was not handled and true if value was handled.
 	 */
 	public function handle( $timestamp, $level, $message, $context ) {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0',
+			LogHandlerFileV2::class . '::handle',
+		);
 
 		if ( isset( $context['source'] ) && $context['source'] ) {
 			$handle = $context['source'];
@@ -221,11 +232,19 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	/**
 	 * Clear entries from chosen file.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @param string $handle Log handle.
 	 *
 	 * @return bool
 	 */
 	public function clear( $handle ) {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0',
+			LogHandlerFileV2::class . '::clear',
+		);
+
 		$result = false;
 
 		// Close the file if it's already open.
@@ -247,11 +266,19 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	/**
 	 * Remove/delete the chosen file.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @param string $handle Log handle.
 	 *
 	 * @return bool
 	 */
 	public function remove( $handle ) {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0',
+			FileController::class . '::delete_files'
+		);
+
 		$removed       = false;
 		$logs          = $this->get_log_files();
 		$log_directory = LoggingUtil::get_log_directory();
@@ -347,10 +374,17 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	/**
 	 * Get a log file path.
 	 *
+	 * @deprecated 9.8.0 Download files via the Logs screen in WP Admin instead.
+	 *
 	 * @param string $handle Log name.
 	 * @return bool|string The log file path or false if path cannot be determined.
 	 */
 	public static function get_log_file_path( $handle ) {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0'
+		);
+
 		$log_directory = LoggingUtil::get_log_directory();
 
 		if ( function_exists( 'wp_hash' ) ) {
@@ -366,11 +400,19 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	 *
 	 * File names consist of the handle, followed by the date, followed by a hash, .log.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @since 3.3
 	 * @param string $handle Log name.
 	 * @return bool|string The log file name or false if cannot be determined.
 	 */
 	public static function get_log_file_name( $handle ) {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0',
+			LoggingUtil::class . '::generate_log_file_id',
+		);
+
 		if ( function_exists( 'wp_hash' ) ) {
 			$date_suffix = date( 'Y-m-d', time() );
 			$hash_suffix = wp_hash( $handle );
@@ -406,10 +448,18 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	/**
 	 * Delete all logs older than a defined timestamp.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @since 3.4.0
 	 * @param integer $timestamp Timestamp to delete logs before.
 	 */
 	public static function delete_logs_before_timestamp( $timestamp = 0 ) {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0',
+			LogHandlerFileV2::class . '::delete_logs_before_timestamp',
+		);
+
 		if ( ! $timestamp ) {
 			return;
 		}
@@ -429,10 +479,18 @@ class WC_Log_Handler_File extends WC_Log_Handler {
 	/**
 	 * Get all log files in the log directory.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @since 3.4.0
 	 * @return array
 	 */
 	public static function get_log_files() {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0',
+			FileController::class . '::get_files'
+		);
+
 		$log_directory = LoggingUtil::get_log_directory();
 
 		$files  = @scandir( $log_directory ); // @codingStandardsIgnoreLine.

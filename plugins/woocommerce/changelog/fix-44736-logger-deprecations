@@ -1,0 +1,4 @@
+Significance: patch
+Type: update
+
+Deprecate the obsolete file logging class WC_Log_Handler_File in favor of the newer LogHandlerFileV2

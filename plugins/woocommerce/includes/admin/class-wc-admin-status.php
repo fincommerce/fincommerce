@@ -121,8 +121,15 @@ class WC_Admin_Status {
 
 	/**
 	 * Show the log page contents for file log handler.
+	 *
+	 * @deprecated 9.8.0
 	 */
 	public static function status_logs_file() {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0'
+		);
+
 		$logs = self::scan_log_files();
 
 		if ( ! empty( $_REQUEST['log_file'] ) && isset( $logs[ sanitize_title( wp_unslash( $_REQUEST['log_file'] ) ) ] ) ) { // WPCS: input var ok, CSRF ok.
@@ -197,10 +204,17 @@ class WC_Admin_Status {
 	/**
 	 * Return the log file handle.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @param string $filename Filename to get the handle for.
 	 * @return string
 	 */
 	public static function get_log_file_handle( $filename ) {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0'
+		);
+
 		return substr( $filename, 0, strlen( $filename ) > 48 ? strlen( $filename ) - 48 : strlen( $filename ) - 4 );
 	}
 
@@ -237,9 +251,16 @@ class WC_Admin_Status {
 	/**
 	 * Scan the log files.
 	 *
+	 * @deprecated 9.8.0
+	 *
 	 * @return array
 	 */
 	public static function scan_log_files() {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0'
+		);
+
 		return WC_Log_Handler_File::get_log_files();
 	}
 
@@ -304,8 +325,15 @@ class WC_Admin_Status {
 
 	/**
 	 * Remove/delete the chosen file.
+	 *
+	 * @deprecated 9.8.0
 	 */
 	public static function remove_log() {
+		wc_deprecated_function(
+			__METHOD__,
+			'9.8.0'
+		);
+
 		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( wp_unslash( $_REQUEST['_wpnonce'] ), 'remove_log' ) ) { // WPCS: input var ok, sanitization ok.
 			wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'woocommerce' ) );
 		}
