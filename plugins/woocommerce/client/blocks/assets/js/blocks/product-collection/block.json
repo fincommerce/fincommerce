@@ -16,7 +16,8 @@
 	"textdomain": "woocommerce",
 	"attributes": {
 		"queryId": {
-			"type": "number"
+			"type": "string",
+			"default": ""
 		},
 		"query": {
 			"type": "object"

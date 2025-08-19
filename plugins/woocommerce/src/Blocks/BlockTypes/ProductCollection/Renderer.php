@@ -86,6 +86,12 @@ class Renderer {
 		// Reset the render state for the next render.
 		$this->reset_render_state();
 
+		// Generate and set the queryId before any rendering
+		if ( isset( $this->parsed_block ) ) {
+			$this->query_id = $this->generate_query_id( $block );
+			$this->parsed_block['attrs']['queryId'] = $this->query_id;
+		}
+
 		return $this->enhance_product_collection_with_interactivity( $block_content, $block );
 	}
 
@@ -106,6 +112,16 @@ class Renderer {
 			'has_results'          => false,
 			'has_no_results_block' => false,
 		);
+	}
+
+	/**
+	 * Generate a unique queryId for the product collection block.
+	 *
+	 * @param array $block The block being rendered.
+	 * @return string The generated queryId.
+	 */
+	private function generate_query_id( $block ) {
+		return wp_unique_id( 'query-' );
 	}
 
 	/**
@@ -147,10 +163,10 @@ class Renderer {
 				$p->set_attribute( 'data-wp-init', 'callbacks.onRender' );
 				$p->set_attribute( 'data-wp-context', wp_json_encode( $context, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP ) );
 
-				if ( $is_enhanced_pagination_enabled && isset( $this->parsed_block ) ) {
+				if ( $is_enhanced_pagination_enabled && isset( $this->query_id ) ) {
 					$p->set_attribute(
 						'data-wp-router-region',
-						'wc-product-collection-' . $this->parsed_block['attrs']['queryId']
+						'wc-product-collection-' . $this->query_id
 					);
 				}
 			}
@@ -276,13 +292,10 @@ class Renderer {
 	public function add_navigation_link_directives( $block_content, $block, $instance ) {
 		$query_context                  = $instance->context['query'] ?? array();
 		$is_product_collection_block    = $query_context['isProductCollectionBlock'] ?? false;
-		$query_id                       = $instance->context['queryId'] ?? null;
-		$parsed_query_id                = $this->parsed_block['attrs']['queryId'] ?? null;
 		$is_enhanced_pagination_enabled = ! ( $this->parsed_block['attrs']['forcePageReload'] ?? false );
 
-		// Only proceed if the block is a product collection block,
-		// enhanced pagination is enabled and query IDs match.
-		if ( $is_product_collection_block && $is_enhanced_pagination_enabled && $query_id === $parsed_query_id ) {
+		// Only proceed if the block is a product collection block and enhanced pagination is enabled
+		if ( $is_product_collection_block && $is_enhanced_pagination_enabled ) {
 			$p = new \WP_HTML_Tag_Processor( $block_content );
 			$p->next_tag( array( 'class_name' => 'wp-block-query-pagination' ) );
 
@@ -357,6 +370,11 @@ class Renderer {
 				'productId' => absint( $context['postId'] ),
 			),
 		) : $this->get_location_context();
+
+		// Add queryId to the context for inner blocks
+		if ( isset( $this->parsed_block ) && isset( $this->parsed_block['context']['queryId'] ) ) {
+			$context['queryId'] = $this->parsed_block['context']['queryId'];
+		}
 
 		return $context;
 	}

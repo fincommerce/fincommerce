@@ -7,7 +7,7 @@
 	"description": "The contents of this block will display when there are no products found.",
 	"textdomain": "woocommerce",
 	"keywords": [ "Product Collection" ],
-	"usesContext": [ "queryId", "query" ],
+	"usesContext": [ "query" ],
 	"ancestor": [ "woocommerce/product-collection" ],
 	"supports": {
 		"interactivity": {

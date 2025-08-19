@@ -18,7 +18,10 @@ class Utils {
 	 * @param WP_Block $block Block instance.
 	 */
 	public static function prepare_and_execute_query( $block ) {
-		$page_key = isset( $block->context['queryId'] ) ? 'query-' . $block->context['queryId'] . '-page' : 'query-page';
+		// The queryId is available in the block context for inner blocks
+		$query_id = $block->context['queryId'] ?? null;
+		$page_key = $query_id ? 'query-' . $query_id . '-page' : 'query-page';
+
 		// phpcs:ignore WordPress.Security.NonceVerification
 		$page = empty( $_GET[ $page_key ] ) ? 1 : (int) $_GET[ $page_key ];
 

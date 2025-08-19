@@ -21,7 +21,6 @@ export enum ProductCollectionUIStatesInEditor {
 
 export interface ProductCollectionAttributes {
 	query: ProductCollectionQuery;
-	queryId: number;
 	queryContext: [
 		{
 			page: number;
