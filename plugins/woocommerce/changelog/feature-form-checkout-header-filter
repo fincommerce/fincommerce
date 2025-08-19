@@ -1,0 +1,4 @@
+Significance: patch
+Type: add
+
+Added new filter `woocommerce_checkout_order_review_heading` to allow customizing the 'Your Order' text on the checkout form.
