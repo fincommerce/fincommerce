@@ -1,0 +1,4 @@
+Significance: minor
+Type: fix
+
+Correct overflow issue for order attribution origin text
