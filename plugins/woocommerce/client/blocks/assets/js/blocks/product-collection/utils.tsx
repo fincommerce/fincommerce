@@ -395,18 +395,22 @@ export const useSetPreviewState = ( {
 		if ( ! setPreviewState && ! isUsingReferencePreviewMode ) {
 			const isGenericArchiveTemplate =
 				location.type === LocationType.Archive && termId === null;
+			const isPreview = isGenericArchiveTemplate
+				? !! attributes?.query?.inherit
+				: false;
 
-			setAttributes( {
-				__privatePreviewState: {
-					isPreview: isGenericArchiveTemplate
-						? !! attributes?.query?.inherit
-						: false,
-					previewMessage: __(
-						'Actual products will vary depending on the page being viewed.',
-						'woocommerce'
-					),
-				},
-			} );
+			// Avoid setting preview state if it's already set to false.
+			if ( isPreview ) {
+				setAttributes( {
+					__privatePreviewState: {
+						isPreview,
+						previewMessage: __(
+							'Actual products will vary depending on the page being viewed.',
+							'woocommerce'
+						),
+					},
+				} );
+			}
 		}
 	}, [
 		attributes?.query?.inherit,

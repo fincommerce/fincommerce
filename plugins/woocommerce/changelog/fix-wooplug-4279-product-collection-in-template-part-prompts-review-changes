@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Product Collection: prevent attributes updates even without user touching the block
