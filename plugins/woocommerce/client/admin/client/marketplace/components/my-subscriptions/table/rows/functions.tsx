@@ -381,6 +381,7 @@ export function version(
 }
 
 export function actions( subscription: Subscription ): TableRow {
+	const isWmb = subscription.is_wmb ?? false;
 	let actionButton = null;
 	if ( subscription.product_key === '' ) {
 		actionButton = <SubscribeButton subscription={ subscription } />;
@@ -388,7 +389,8 @@ export function actions( subscription: Subscription ): TableRow {
 		actionButton = <RenewButton subscription={ subscription } />;
 	} else if (
 		subscription.local.installed === false &&
-		subscription.subscription_installed === false
+		subscription.subscription_installed === false &&
+		isWmb === false
 	) {
 		actionButton = <Install subscription={ subscription } />;
 	} else if (

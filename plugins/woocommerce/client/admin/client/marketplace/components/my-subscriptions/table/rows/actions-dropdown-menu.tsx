@@ -14,14 +14,17 @@ import { ADMIN_URL } from '../../../../../utils/admin-settings';
 export default function ActionsDropdownMenu( props: {
 	subscription: Subscription;
 } ) {
-	const controls = [
-		{
+	const isWmb = props.subscription.is_wmb ?? false;
+	const controls = [];
+
+	if ( ! isWmb ) {
+		controls.push( {
 			title: __( 'Manage in Plugins', 'woocommerce' ),
 			onClick: () => {
 				window.location.href = ADMIN_URL + 'plugins.php';
 			},
-		},
-	];
+		} );
+	}
 
 	if ( ! props.subscription.is_shared ) {
 		controls.unshift( {

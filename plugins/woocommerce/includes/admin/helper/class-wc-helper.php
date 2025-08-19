@@ -146,6 +146,7 @@ class WC_Helper {
 		include_once __DIR__ . '/class-wc-helper-admin.php';
 		include_once __DIR__ . '/class-wc-helper-subscriptions-api.php';
 		include_once __DIR__ . '/class-wc-helper-orders-api.php';
+		include_once __DIR__ . '/class-wc-helper-wmb-subscriptions.php';
 		include_once __DIR__ . '/class-wc-product-usage-notice.php';
 	}
 
@@ -1974,6 +1975,7 @@ class WC_Helper {
 				'sites_active'      => 0,
 				'autorenew'         => false,
 				'maxed'             => false,
+				'is_wmb'            => false, // Add is_wmb property for non-WMB subscriptions.
 			);
 		}
 
@@ -1999,6 +2001,9 @@ class WC_Helper {
 			if ( ! empty( $updates[ $subscription['product_id'] ]['url'] ) ) {
 				$subscription['product_url'] = $updates[ $subscription['product_id'] ]['url'];
 			}
+
+			// Add is_wmb property for existing subscriptions.
+			$subscription['is_wmb'] = WC_Helper_WMB_Subscriptions::is_wmb_subscription( $subscription );
 		}
 
 		// Sort subscriptions by name and expiration date.
@@ -2069,6 +2074,11 @@ class WC_Helper {
 	 * @return bool True if installed, false otherwise.
 	 */
 	public static function is_subscription_installed( $subscription, $subscriptions ) {
+		// WMB subscriptions are handled differently because they don't have a local install.
+		if ( WC_Helper_WMB_Subscriptions::is_wmb_subscription( $subscription ) ) {
+			return WC_Helper_WMB_Subscriptions::is_subscription_installed( $subscription );
+		}
+
 		if ( false === $subscription['local']['installed'] ) {
 			return false;
 		}
