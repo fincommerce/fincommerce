@@ -39,7 +39,6 @@ class DraftOrders {
 	 * Set all hooks related to adding Checkout Draft order functionality to Woo Core.
 	 */
 	public function init() {
-		add_filter( 'wc_order_statuses', [ $this, 'register_draft_order_status' ] );
 		add_filter( 'woocommerce_register_shop_order_post_statuses', [ $this, 'register_draft_order_post_status' ] );
 		add_filter( 'woocommerce_analytics_excluded_order_statuses', [ $this, 'append_draft_order_post_status' ] );
 		add_filter( 'woocommerce_valid_order_statuses_for_payment', [ $this, 'append_draft_order_post_status' ], 999 );
@@ -81,20 +80,6 @@ class DraftOrders {
 		if ( false === call_user_func( $has_scheduled_action, self::DRAFT_CLEANUP_EVENT_HOOK ) ) {
 			as_schedule_recurring_action( strtotime( 'midnight tonight' ), DAY_IN_SECONDS, self::DRAFT_CLEANUP_EVENT_HOOK );
 		}
-	}
-
-	/**
-	 * Register custom order status for orders created via the API during checkout.
-	 *
-	 * Draft order status is used before payment is attempted, during checkout, when a cart is converted to an order.
-	 *
-	 * @param array $statuses Array of statuses.
-	 * @internal
-	 * @return array
-	 */
-	public function register_draft_order_status( array $statuses ) {
-		$statuses[ self::DB_STATUS ] = _x( 'Draft', 'Order status', 'woocommerce' );
-		return $statuses;
 	}
 
 	/**

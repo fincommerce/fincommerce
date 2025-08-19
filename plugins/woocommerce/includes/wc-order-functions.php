@@ -109,6 +109,7 @@ function wc_get_order_statuses() {
 		OrderInternalStatus::CANCELLED  => _x( 'Cancelled', 'Order status', 'woocommerce' ),
 		OrderInternalStatus::REFUNDED   => _x( 'Refunded', 'Order status', 'woocommerce' ),
 		OrderInternalStatus::FAILED     => _x( 'Failed', 'Order status', 'woocommerce' ),
+		OrderInternalStatus::DRAFT      => _x( 'Draft', 'Order status', 'woocommerce' ),
 	);
 	return apply_filters( 'wc_order_statuses', $order_statuses );
 }
