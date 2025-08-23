@@ -1691,7 +1691,15 @@ class WC_AJAX {
 		}
 
 		$data_store = WC_Data_Store::load( 'product' );
-		$ids        = $data_store->search_products( $term, '', (bool) $include_variations, false, $limit, $include_ids, $exclude_ids );
+		$ids        = $data_store->search_products(
+			$term,
+			'',
+			(bool) $include_variations,
+			filter_var( $_GET['all_statuses'] ?? false, FILTER_VALIDATE_BOOLEAN ),
+			$limit,
+			$include_ids,
+			$exclude_ids
+		);
 
 		$products = array();
 

@@ -1,0 +1,4 @@
+Significance: patch
+Type: enhancement
+
+Expand ajax method json_search_products to enable searching products in all statuses (such as scheduled)
