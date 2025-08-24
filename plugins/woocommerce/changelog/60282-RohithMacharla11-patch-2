@@ -1,0 +1,4 @@
+Significance: patch
+Type: fix
+
+Fix - Update the ARIA `role` on the store notice to `status` for improved accessibility.
