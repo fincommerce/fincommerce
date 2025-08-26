@@ -35,12 +35,11 @@ import {
 } from '../../types';
 import { setQueryAttribute, getDefaultSettings } from '../../utils';
 import UpgradeNotice from './upgrade-notice';
-import ColumnsControl from './columns-control';
 import {
 	InheritQueryControl,
 	FilterableControl,
 } from './use-page-context-control';
-import useCarouselLayoutAdjustments from './use-carousel-layout-adjustments';
+import useLayoutAdjustments from './use-layout-adjustments';
 import DefaultQueryOrderByControl from './order-by-control/default-query-order-by-control';
 import CustomQueryOrderByControl from './order-by-control/custom-query-order-by-control';
 import OnSaleControl from './on-sale-control';
@@ -92,7 +91,7 @@ const ProductCollectionInspectorControls = (
 
 	// Carousel layout influences the visibility and behavior of some controls.
 	const isCarouselLayout = displayLayout?.type === LayoutOptions.CAROUSEL;
-	useCarouselLayoutAdjustments( clientId, attributes );
+	useLayoutAdjustments( clientId, attributes );
 
 	const showCustomQueryControls = inherit === false;
 	const showInheritQueryControl =
@@ -104,7 +103,6 @@ const ProductCollectionInspectorControls = (
 	const showDefaultOrderControl = ! showCustomQueryControls;
 	const showOffsetControl =
 		showCustomQueryControls && shouldShowFilter( CoreFilterNames.OFFSET );
-	const showColumnsControl = ! isCarouselLayout;
 	const showMaxPagesToShowControl =
 		showCustomQueryControls &&
 		! isCarouselLayout &&
@@ -191,9 +189,6 @@ const ProductCollectionInspectorControls = (
 						{ ...queryControlProps }
 						carouselVariant={ isCarouselLayout }
 					/>
-				) }
-				{ showColumnsControl && (
-					<ColumnsControl { ...displayControlProps } />
 				) }
 				{ showOffsetControl && (
 					<OffsetControl { ...queryControlProps } />
