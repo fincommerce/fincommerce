@@ -1024,11 +1024,43 @@ class WC_Product extends WC_Abstract_Legacy_Product {
 	public function set_stock_status( $status = ProductStockStatus::IN_STOCK ) {
 		$valid_statuses = wc_get_product_stock_status_options();
 
-		if ( isset( $valid_statuses[ $status ] ) ) {
-			$this->set_prop( 'stock_status', $status );
+		if ( is_string( $status ) ) {
+			$status = $status;
+		} elseif ( is_array( $status ) ) {
+			if ( empty( $status ) ) {
+				$status = null;
+			} else {
+				$status = $status[0];
+			}
 		} else {
-			$this->set_prop( 'stock_status', ProductStockStatus::IN_STOCK );
+			$status = null;
 		}
+
+		// Validate.
+		if ( null !== $status && isset( $valid_statuses[ $status ] ) ) {
+			$this->set_prop( 'stock_status', $status );
+			return;
+		}
+
+		// Log warning about invalid input.
+		if ( function_exists( 'wc_get_logger' ) ) {
+			$logger  = wc_get_logger();
+			$context = array( 'source' => 'wc-product' );
+
+			// Use only when WP_DEBUG is enabled.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				$logger->warning(
+					sprintf(
+						'Invalid stock status received: %s.',
+						is_scalar( $status ) || is_object( $status ) ? maybe_serialize( $status ) : gettype( $status )
+					),
+					$context
+				);
+			}
+		}
+
+		// Fallback to default.
+		$this->set_prop( 'stock_status', ProductStockStatus::IN_STOCK );
 	}
 
 	/**
