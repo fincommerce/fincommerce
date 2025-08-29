@@ -154,6 +154,10 @@ class WC_Gateway_Paypal_Request {
 
 			$redirect_url = $this->get_approve_link( $http_code, $response_data );
 
+			// Save the PayPal order ID to the order.
+			$order->update_meta_data( '_paypal_order_id', $response_data['id'] );
+			$order->save();
+
 			return array(
 				'id'           => $response_data['id'],
 				'redirect_url' => $redirect_url,
@@ -318,14 +322,18 @@ class WC_Gateway_Paypal_Request {
 			'payment_source' => array(
 				'paypal' => array(
 					'experience_context' => array(
-						'user_action'         => 'PAY_NOW',
-						'shipping_preference' => $this->get_paypal_shipping_preference( $order ),
+						'user_action'                  => 'PAY_NOW',
+						'shipping_preference'          => $this->get_paypal_shipping_preference( $order ),
 						// Customer redirected here on approval.
-						'return_url'          => esc_url_raw( add_query_arg( 'utm_nooverride', '1', $this->gateway->get_return_url( $order ) ) ),
+						'return_url'                   => esc_url_raw( add_query_arg( 'utm_nooverride', '1', $this->gateway->get_return_url( $order ) ) ),
 						// Customer redirected here on cancellation.
-						'cancel_url'          => esc_url_raw( $order->get_cancel_order_url_raw() ),
+						'cancel_url'                   => esc_url_raw( $order->get_cancel_order_url_raw() ),
 						// Convert WordPress locale format (e.g., 'en_US') to PayPal's expected format (e.g., 'en-US').
-						'locale'              => str_replace( '_', '-', get_locale() ),
+						'locale'                       => str_replace( '_', '-', get_locale() ),
+						'order_update_callback_config' => array(
+							'callback_events' => array( 'SHIPPING_ADDRESS' ),
+							'callback_url'    => get_site_url( null, '/wp-json/wc/v3/paypal-standard/update-shipping' ),
+						),
 					),
 				),
 			),

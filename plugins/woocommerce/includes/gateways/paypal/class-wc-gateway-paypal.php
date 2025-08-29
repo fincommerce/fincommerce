@@ -488,10 +488,6 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 				);
 			}
 
-			// Save the PayPal order ID. This is different from the WooCommerce order ID.
-			$order->update_meta_data( '_paypal_order_id', $paypal_order['id'] );
-			$order->save();
-
 			$redirect_url = $paypal_order['redirect_url'];
 		} else {
 			$redirect_url = $paypal_request->get_request_url( $order, $this->testmode );
@@ -761,6 +757,7 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 			return false;
 		}
 
+		error_log( 'Orders v2 is enabled' );
 		return true;
 	}
 
@@ -783,6 +780,8 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function should_show_legacy_settings() {
+		error_log( 'should_show_legacy_settings' );
+		error_log( print_r( ! $this->should_use_orders_v2(), true ) );
 		return ! $this->should_use_orders_v2();
 	}
 

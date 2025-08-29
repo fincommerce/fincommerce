@@ -196,6 +196,7 @@ $legacy_settings = array(
  * @since 10.2.0
  */
 if ( apply_filters( 'woocommerce_paypal_show_legacy_settings', true ) ) {
+	error_log( 'Applying legacy settings' );
 	$settings = array_merge( $settings, $legacy_settings );
 }
 
