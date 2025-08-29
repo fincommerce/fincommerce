@@ -39,6 +39,11 @@ const config = {
 		// `beforeEach` don't make sense.
 		// See https://github.com/woocommerce/woocommerce/pull/46432.
 		'playwright/no-hooks': [ 'error', { allow: [ 'beforeEach' ] } ],
+		// Disabled because the there are some tests that are skipped
+		// intentionally due to a known bug with needs_shipping
+		// 'playwright/no-skipped-test': 'error',
+		'playwright/no-useless-not': 'error',
+		'playwright/no-wait-for-selector': 'error',
 	},
 };
 
