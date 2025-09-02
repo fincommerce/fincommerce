@@ -3,6 +3,7 @@ namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\Utils\BlocksSharedState;
 use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
+use Automattic\WooCommerce\Enums\ProductType;
 
 /**
  * ProductPrice class.
@@ -77,10 +78,10 @@ class ProductPrice extends AbstractBlock {
 
 			$is_descendant_of_product_collection       = isset( $block->context['query']['isProductCollectionBlock'] );
 			$is_descendant_of_grouped_product_selector = isset( $block->context['isDescendantOfGroupedProductSelector'] );
-			$is_interactive                            = ! $is_descendant_of_product_collection && ! $is_descendant_of_grouped_product_selector && $product->is_type( 'variable' );
+			$is_interactive                            = ! $is_descendant_of_product_collection && ! $is_descendant_of_grouped_product_selector && $product->is_type( ProductType::VARIABLE );
 
-			$wrapper_attributes = array();
-			$watch_attribute    = '';
+			$wrapper_attributes     = array();
+			$interactive_attributes = '';
 
 			if ( $is_interactive ) {
 				$variations_data           = $product->get_available_variations();
@@ -123,7 +124,7 @@ class ProductPrice extends AbstractBlock {
 						'productElementKey' => 'price_html',
 					);
 					$wrapper_attributes['data-wp-context']     = wp_json_encode( $context, JSON_NUMERIC_CHECK | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP );
-					$watch_attribute                           = 'data-wp-watch="callbacks.updateValue"';
+					$interactive_attributes                    = 'data-wp-watch="callbacks.updateValue" aria-live="polite" aria-atomic="true"';
 				}
 			}
 
@@ -135,7 +136,7 @@ class ProductPrice extends AbstractBlock {
 				esc_attr( $text_align_styles_and_classes['class'] ?? '' ),
 				esc_attr( $styles_and_classes['classes'] ),
 				esc_attr( $styles_and_classes['styles'] ?? '' ),
-				$watch_attribute,
+				$interactive_attributes,
 				$product->get_price_html()
 			);
 		}
