@@ -461,6 +461,63 @@ function wc_rest_should_load_namespace( string $ns, string $rest_route = '' ): b
 }
 
 /**
+ * Conditionally loads a REST API namespace based on the current route to improve performance.
+ *
+ * This function implements lazy loading for WooCommerce REST API namespaces to prevent loading
+ * all controllers on every request. It checks if the current REST route matches the namespace
+ * in order for that namespace to be loaded. If the namespace does not match the current rest
+ * route, a callback will be registered to possibly load the namespace again on `rest_pre_dispatch`;
+ * this is done to allow the namespace to be loaded on the fly during `rest_do_request()` calls.
+ *
+ * @param string   $ns The namespace to check.
+ * @param callable $callback The callback to execute if the namespace should be loaded.
+ * @param string   $rest_route (Optional) The REST route to check against.
+ * @param string   $callback_filter_id (Internal) Used to prevent recursive filter registration.
+ *
+ * @return void
+ */
+function wc_rest_lazy_load_namespace( string $ns, callable $callback, string $rest_route = '', string $callback_filter_id = '' ) {
+	if ( '' === $rest_route ) {
+		$rest_route = $GLOBALS['wp']->query_vars['rest_route'] ?? '';
+	}
+
+	if ( '' !== $rest_route ) {
+		$rest_route = trailingslashit( ltrim( $rest_route, '/' ) );
+		$ns         = trailingslashit( $ns );
+		if ( '/' === $rest_route || str_starts_with( $rest_route, $ns ) ) {
+			// Load all namespaces for root requests (/wp-json/) to maintain API discovery functionality.
+			if ( '' !== $callback_filter_id ) {
+				// Remove the current filter prior to the callback, to prevent recursive callback issues.
+				// This is crucial for APIs like wc-analytics that may callback to their own namespace when loading.
+				remove_filter( 'rest_pre_dispatch', $callback_filter_id, 0 );
+			}
+			if ( ! is_callable( $callback ) ) {
+				_doing_it_wrong( 'wc_rest_lazy_load_namespace', esc_html__( 'Namespace lazy loading must be given a valid callback.', 'woocommerce' ), esc_html( WC()->version ) );
+
+				return;
+			}
+			call_user_func( $callback );
+
+			return;
+		}
+	}
+
+	// Register a filter to check again on rest_pre_dispatch for dynamic loading.
+	if ( '' === $callback_filter_id ) {
+		$callback_filter    = function ( $filter_result, $server, $request ) use ( $ns, $callback, &$callback_filter_id ) {
+			if ( is_callable( array( $request, 'get_route' ) ) ) {
+				wc_rest_lazy_load_namespace( $ns, $callback, $request->get_route(), $callback_filter_id );
+			}
+
+			return $filter_result;
+		};
+		$callback_filter_id = _wp_filter_build_unique_id( 'rest_pre_dispatch', $callback_filter, 0 );
+		// This runs on priority 0 so that the namespace is loaded before `rest_handle_options_request()` is run (priority 10).
+		add_filter( 'rest_pre_dispatch', $callback_filter, 0, 3 );
+	}
+}
+
+/**
  * Check if the WooCommerce REST API v4 feature is enabled.
  *
  * @return bool True if the REST API v4 feature is enabled, false otherwise.
