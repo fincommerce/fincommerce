@@ -47,6 +47,6 @@ export type emitValidateEventType = ( {
 
 export type CheckoutPutData = {
 	additional_fields?: AdditionalValues;
-	order_notes?: string;
+	customer_note?: string;
 	payment_method?: string;
 };

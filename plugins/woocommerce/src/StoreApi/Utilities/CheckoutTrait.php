@@ -141,7 +141,9 @@ trait CheckoutTrait {
 	 * @param \WP_REST_Request $request Full details about the request.
 	 */
 	private function update_order_from_request( \WP_REST_Request $request ) {
-		$this->order->set_customer_note( wc_sanitize_textarea( $request['customer_note'] ) ?? '' );
+		if ( isset( $request['customer_note'] ) ) {
+			$this->order->set_customer_note( wc_sanitize_textarea( $request['customer_note'] ) );
+		}
 		$payment_method = $this->get_request_payment_method( $request );
 		if ( null !== $payment_method ) {
 			WC()->session->set( 'chosen_payment_method', $payment_method->id );

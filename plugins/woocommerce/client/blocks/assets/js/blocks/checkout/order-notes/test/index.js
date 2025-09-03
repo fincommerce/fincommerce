@@ -64,7 +64,7 @@ describe( 'Checkout order notes', () => {
 		expect( textarea ).toBeNull();
 	} );
 
-	it( 'Retains the order note when toggling the textarea on and off', async () => {
+	it( 'Clears the order note when toggling the textarea on and off', async () => {
 		const user = userEvent.setup();
 		const onChange = jest.fn();
 		const { container, rerender } = render(
@@ -129,6 +129,6 @@ describe( 'Checkout order notes', () => {
 		await act( async () => {
 			await user.click( checkbox );
 		} );
-		expect( onChange ).toHaveBeenLastCalledWith( 'Test message' );
+		expect( onChange ).toHaveBeenLastCalledWith( '' );
 	} );
 } );

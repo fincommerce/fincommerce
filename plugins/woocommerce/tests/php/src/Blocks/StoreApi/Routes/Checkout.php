@@ -1327,7 +1327,7 @@ class Checkout extends MockeryTestCase {
 					'plugin-namespace/leave-on-porch' => true,
 				),
 				'payment_method'    => 'bacs',
-				'order_notes'       => 'Please leave my package on the porch',
+				'customer_note'     => 'Please leave my package on the porch',
 			)
 		);
 
@@ -1345,6 +1345,7 @@ class Checkout extends MockeryTestCase {
 		$this->assertArrayNotHasKey( 'plugin-namespace/student-id', $additional_fields_address );
 		$this->assertEquals( 'engineering', $additional_fields_contact['plugin-namespace/job-function']['value'] );
 		$this->assertEquals( true, $additional_fields_order['plugin-namespace/leave-on-porch']['value'] );
+		$this->assertEquals( 'Please leave my package on the porch', $order->get_customer_note() );
 	}
 
 	/**

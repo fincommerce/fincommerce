@@ -145,7 +145,7 @@ const updateCheckoutData = (): void => {
 	}
 
 	if ( newCheckoutData.orderNotes !== localState.checkoutData.orderNotes ) {
-		requestData.order_notes = newCheckoutData.orderNotes;
+		requestData.customer_note = newCheckoutData.orderNotes;
 	}
 
 	if (
