@@ -86,6 +86,17 @@ export const ActivityPanel = ( { isEmbedded, query } ) => {
 
 	useEffect( () => {
 		return addHistoryListener( () => {
+			// Only skip closing when a visible Stripe banner is present.
+			const stripeBanner = document.querySelector(
+				'.woocommerce-embedded-connect-notification-banner, .stripe-notifications-banner-wrapper'
+			);
+			const isStripeBannerVisible =
+				stripeBanner &&
+				!!( stripeBanner.offsetParent || stripeBanner.getClientRects().length );
+			if ( isStripeBannerVisible ) {
+				return;
+			}
+
 			closePanel();
 			clearPanel();
 		} );
