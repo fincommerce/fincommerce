@@ -64,10 +64,11 @@ class OrderController {
 	/**
 	 * Update an order using data from the current cart.
 	 *
-	 * @param \WC_Order $order The order object to update.
-	 * @param boolean   $update_totals Whether to update totals or not.
+	 * @param \WC_Order         $order The order object to update.
+	 * @param boolean           $update_totals Whether to update totals or not.
+	 * @param \WC_Customer|null $customer A customer object to use as the source of billing and shipping addresses. If null, will use the current session customer.
 	 */
-	public function update_order_from_cart( \WC_Order $order, $update_totals = true ) {
+	public function update_order_from_cart( \WC_Order $order, $update_totals = true, ?\WC_Customer $customer = null ) {
 		/**
 		 * This filter ensures that local pickup locations are still used for order taxes by forcing the address used to
 		 * calculate tax for an order to match the current address of the customer.
@@ -111,7 +112,7 @@ class OrderController {
 
 		// Update the current order to match the current cart.
 		$this->update_line_items_from_cart( $order );
-		$this->update_addresses_from_cart( $order );
+		$this->update_addresses_from_cart( $order, $customer );
 		$order->set_currency( get_woocommerce_currency() );
 		$order->set_prices_include_tax( 'yes' === get_option( 'woocommerce_prices_include_tax' ) );
 		$order->set_customer_id( get_current_user_id() );
@@ -817,34 +818,45 @@ class OrderController {
 	/**
 	 * Update address data from cart and/or customer session data.
 	 *
-	 * @param \WC_Order $order The order object to update.
+	 * @param \WC_Order    $order    The order object to update.
+	 * @param \WC_Customer $customer The customer to copy the address data from.
 	 */
-	protected function update_addresses_from_cart( \WC_Order $order ) {
+	protected function update_addresses_from_cart( \WC_Order $order, ?\WC_Customer $customer = null ) {
+		// Determine which customer to use for copying address data.
+		$customer_to_copy = $customer instanceof \WC_Customer ? $customer : WC()->customer;
+
+		// If no valid customer context exists, return early to prevent fatals.
+		if ( ! $customer_to_copy instanceof \WC_Customer ) {
+			return;
+		}
+
 		$order->set_props(
 			array(
-				'billing_first_name'  => wc()->customer->get_billing_first_name(),
-				'billing_last_name'   => wc()->customer->get_billing_last_name(),
-				'billing_company'     => wc()->customer->get_billing_company(),
-				'billing_address_1'   => wc()->customer->get_billing_address_1(),
-				'billing_address_2'   => wc()->customer->get_billing_address_2(),
-				'billing_city'        => wc()->customer->get_billing_city(),
-				'billing_state'       => wc()->customer->get_billing_state(),
-				'billing_postcode'    => wc()->customer->get_billing_postcode(),
-				'billing_country'     => wc()->customer->get_billing_country(),
-				'billing_email'       => wc()->customer->get_billing_email(),
-				'billing_phone'       => wc()->customer->get_billing_phone(),
-				'shipping_first_name' => wc()->customer->get_shipping_first_name(),
-				'shipping_last_name'  => wc()->customer->get_shipping_last_name(),
-				'shipping_company'    => wc()->customer->get_shipping_company(),
-				'shipping_address_1'  => wc()->customer->get_shipping_address_1(),
-				'shipping_address_2'  => wc()->customer->get_shipping_address_2(),
-				'shipping_city'       => wc()->customer->get_shipping_city(),
-				'shipping_state'      => wc()->customer->get_shipping_state(),
-				'shipping_postcode'   => wc()->customer->get_shipping_postcode(),
-				'shipping_country'    => wc()->customer->get_shipping_country(),
-				'shipping_phone'      => wc()->customer->get_shipping_phone(),
+				'billing_first_name'  => $customer_to_copy->get_billing_first_name(),
+				'billing_last_name'   => $customer_to_copy->get_billing_last_name(),
+				'billing_company'     => $customer_to_copy->get_billing_company(),
+				'billing_address_1'   => $customer_to_copy->get_billing_address_1(),
+				'billing_address_2'   => $customer_to_copy->get_billing_address_2(),
+				'billing_city'        => $customer_to_copy->get_billing_city(),
+				'billing_state'       => $customer_to_copy->get_billing_state(),
+				'billing_postcode'    => $customer_to_copy->get_billing_postcode(),
+				'billing_country'     => $customer_to_copy->get_billing_country(),
+				'billing_email'       => $customer_to_copy->get_billing_email(),
+				'billing_phone'       => $customer_to_copy->get_billing_phone(),
+				'shipping_first_name' => $customer_to_copy->get_shipping_first_name(),
+				'shipping_last_name'  => $customer_to_copy->get_shipping_last_name(),
+				'shipping_company'    => $customer_to_copy->get_shipping_company(),
+				'shipping_address_1'  => $customer_to_copy->get_shipping_address_1(),
+				'shipping_address_2'  => $customer_to_copy->get_shipping_address_2(),
+				'shipping_city'       => $customer_to_copy->get_shipping_city(),
+				'shipping_state'      => $customer_to_copy->get_shipping_state(),
+				'shipping_postcode'   => $customer_to_copy->get_shipping_postcode(),
+				'shipping_country'    => $customer_to_copy->get_shipping_country(),
+				'shipping_phone'      => $customer_to_copy->get_shipping_phone(),
 			)
 		);
-		$this->additional_fields_controller->sync_order_additional_fields_with_customer( $order, wc()->customer );
+
+		// Only sync additional fields when we have a valid WC_Customer.
+		$this->additional_fields_controller->sync_order_additional_fields_with_customer( $order, $customer_to_copy );
 	}
 }

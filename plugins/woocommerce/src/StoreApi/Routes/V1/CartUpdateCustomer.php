@@ -213,6 +213,25 @@ class CartUpdateCustomer extends AbstractCartRoute {
 
 		$customer->save();
 
+		// Fix for race condition: Update the draft order directly with fresh customer data
+		// This prevents stale session data from overwriting recent updates when concurrent
+		// requests occur (e.g., batch POST followed immediately by GET checkout).
+		$draft_order = $this->get_draft_order();
+
+		// If no draft order exists yet, create one so the data is properly stored.
+		if ( ! $draft_order && ! WC()->cart->is_empty() ) {
+			$draft_order = $this->order_controller->create_order_from_cart();
+			wc_log_order_step( '[Store API - CartUpdateCustomer] Created draft order while updating customer', array( 'order_object' => $draft_order ) );
+			$this->set_draft_order_id( $draft_order->get_id() );
+		}
+
+		if ( $draft_order ) {
+			$this->order_controller->update_order_from_cart( $draft_order, true, $customer );
+
+			// Save the draft order with fresh data immediately.
+			$draft_order->save();
+		}
+
 		$this->cart_controller->calculate_totals();
 
 		return rest_ensure_response( $this->schema->get_item_response( $cart ) );
