@@ -245,6 +245,17 @@ window.wc.addressAutocomplete.registerAddressAutocompleteProvider =
 					setActiveProvider( countryInput.value, type );
 					if ( addressInputs[ type ][ 'address_1' ] ) {
 						hideSuggestions( type );
+						// Remove branding element when country changes
+						if ( suggestionsContainers[ type ] ) {
+							const brandingElement = suggestionsContainers[
+								type
+							].querySelector(
+								'.woocommerce-address-autocomplete-branding'
+							);
+							if ( brandingElement ) {
+								brandingElement.remove();
+							}
+						}
 					}
 				};
 
@@ -486,6 +497,44 @@ window.wc.addressAutocomplete.registerAddressAutocompleteProvider =
 					suggestionsList.appendChild( li );
 				} );
 
+				// Add branding HTML if available from the active provider.
+				const activeProvider =
+					window.wc.addressAutocomplete.activeProvider[ type ];
+				if ( activeProvider && activeProvider.id ) {
+					// Get the server provider data to access branding_html.
+					const serverProviders =
+						( window &&
+							window.wc_checkout_params &&
+							window.wc_checkout_params.address_providers ) ||
+						[];
+					const serverProvider = serverProviders.find(
+						( provider ) => provider.id === activeProvider.id
+					);
+					const brandingHtml =
+						serverProvider &&
+						typeof serverProvider.branding_html === 'string'
+							? serverProvider.branding_html.trim()
+							: '';
+					if ( brandingHtml ) {
+						// Check if branding element already exists.
+						let brandingElement =
+							suggestionsContainer.querySelector(
+								'.woocommerce-address-autocomplete-branding'
+							);
+						if ( ! brandingElement ) {
+							brandingElement = document.createElement( 'div' );
+							brandingElement.removeAttribute( 'aria-hidden' );
+							brandingElement.className =
+								'woocommerce-address-autocomplete-branding';
+							suggestionsContainer.appendChild( brandingElement );
+						}
+						// Update branding HTML content and make sure it's visible.
+						brandingElement.innerHTML =
+							serverProvider.branding_html;
+						brandingElement.style.display = 'block';
+					}
+				}
+
 				disableBrowserAutofill( addressInput );
 				suggestionsContainer.style.display = 'block';
 				suggestionsContainer.style.marginTop =
@@ -545,6 +594,16 @@ window.wc.addressAutocomplete.registerAddressAutocompleteProvider =
 			const addressInput = addressInputs[ type ][ 'address_1' ];
 
 			suggestionsList.innerHTML = '';
+
+			// Hide branding element but keep it in DOM (will be removed on country change).
+			const brandingElement = suggestionsContainer.querySelector(
+				'.woocommerce-address-autocomplete-branding'
+			);
+			if ( brandingElement ) {
+				brandingElement.style.display = 'none';
+				brandingElement.style.setAttribute( 'aria-hidden', true );
+			}
+
 			suggestionsContainer.style.display = 'none';
 			addressInput.setAttribute( 'aria-expanded', 'false' );
 			addressInput.removeAttribute( 'aria-activedescendant' );
