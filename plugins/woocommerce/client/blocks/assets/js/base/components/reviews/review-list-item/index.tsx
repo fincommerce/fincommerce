@@ -31,6 +31,7 @@ function getReviewImage(
 				<img
 					aria-hidden="true"
 					alt={ review.product_image?.alt || '' }
+					srcSet={ review.product_image?.srcset || '' }
 					src={ review.product_image?.thumbnail || '' }
 				/>
 			) : (
