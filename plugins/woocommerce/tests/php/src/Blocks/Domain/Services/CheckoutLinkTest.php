@@ -40,18 +40,27 @@ class CheckoutLinkTest extends TestCase {
 			\WC_Helper_Product::create_simple_product(),
 			\WC_Helper_Product::create_simple_product(),
 			\WC_Helper_Product::create_simple_product(),
+			\WC_Helper_Product::create_variation_product(),
 		];
 
-		$product_ids = array_map(
-			function ( $product ) {
-				return $product->get_id();
-			},
-			$test_products
-		);
+		$product_ids = [];
+		$products    = [];
+
+		foreach ( $test_products as $product ) {
+			$product_ids[] = $product->get_id();
+			if ( $product->is_type( 'variable' ) ) {
+				$variations = $product->get_available_variations();
+				$variation  = array_shift( $variations );
+
+				$products[] = $product->get_id() . ':1:' . http_build_query( $variation['attributes'], '', ';' );
+			} else {
+				$products[] = $product->get_id();
+			}
+		}
 
 		$coupon = CouponHelper::create_coupon( 'test-coupon' );
 
-		$_GET['products'] = implode( ',', $product_ids );
+		$_GET['products'] = implode( ',', $products );
 		$_GET['coupon']   = 'test-coupon';
 
 		$service = new class() extends CheckoutLink {
@@ -84,6 +93,20 @@ class CheckoutLinkTest extends TestCase {
 		);
 
 		$this->assertEquals( array_values( $product_ids ), array_values( $cart_product_ids ) );
+
+		// Check that the variable product in cart has the expected variations.
+		foreach ( $cart_contents as $cart_item ) {
+			if ( isset( $cart_item['variation'] ) && ! empty( $cart_item['variation'] ) ) {
+				// The first variation should have pa_size=small, pa_colour and pa_number should be empty.
+				$expected_variation = [
+					'attribute_pa_size'   => 'small',
+					'attribute_pa_colour' => '',
+					'attribute_pa_number' => '',
+				];
+				$this->assertEquals( $expected_variation, $cart_item['variation'] );
+			}
+		}
+		
 		$this->assertEquals( array_values( [ 'test-coupon' ] ), array_values( $applied_coupon_codes ) );
 		$this->assertStringContainsString( 'session=', $url );
 

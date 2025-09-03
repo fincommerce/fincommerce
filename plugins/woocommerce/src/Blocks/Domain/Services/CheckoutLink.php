@@ -88,27 +88,79 @@ class CheckoutLink {
 	/**
 	 * Get the products from the checkout link.
 	 *
-	 * @return array The products (keys) and their quantities (values).
+	 * @return array[] Array of products, each containing:
+	 * [
+	 *     'id'             => (int)    Product ID,
+	 *     'quantity'       => (int)    Quantity of the product,
+	 *     'variation'      => (array)  Variation attributes (if any),
+	 *     'cart_item_data' => (array)  Additional cart item data,
+	 * ]
 	 */
 	protected function get_products_from_checkout_link() {
 		$raw_products = array_filter( explode( ',', wc_clean( wp_unslash( $_GET['products'] ?? '' ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$products     = [];
 
-		foreach ( $raw_products as $product_id_qty ) {
-			if ( strpos( $product_id_qty, ':' ) !== false ) {
-				list( $product_id, $qty ) = explode( ':', $product_id_qty );
+		foreach ( $raw_products as $raw_product ) {
+			$cart_item_data = [];
+
+			if ( strpos( $raw_product, ':' ) !== false ) {
+
+				$exploded = explode( ':', $raw_product, 3 );
+
+				$product_id   = $exploded[0] ?? 0;
+				$qty          = $exploded[1] ?? 1;
+				$product_data = $exploded[2] ?? '';
+
+				// If the quantity is not-numeric, it may be key=value pairs.
+				if ( ! is_numeric( $qty ) ) {
+					$product_data = $qty;
+					$qty          = 1;
+				}
+
+				if ( $product_data ) {
+
+					// Parse key=value pairs separated by semicolons.
+					$pairs          = explode( ';', $product_data );
+					$cart_item_data = [];
+
+					foreach ( $pairs as $pair ) {
+						if ( strpos( $pair, '=' ) === false ) {
+							continue;
+						}
+
+						list( $key, $value )                    = explode( '=', $pair, 2 );
+						$cart_item_data[ sanitize_key( $key ) ] = wc_clean( $value );
+					}
+				}
 			} else {
-				$product_id = $product_id_qty;
+				// No custom attributes provided, treat as default quantity.
+				$product_id = $raw_product;
 				$qty        = 1;
 			}
-			$product_id = absint( $product_id );
+
 			$qty        = absint( $qty );
 
 			if ( ! $product_id || ! $qty ) {
 				continue;
 			}
 
-			$products[ $product_id ] = $qty;
+			$variation = array_map(
+				function ( $key, $value ) {
+					return [
+						'attribute' => $key,
+						'value'     => $value,
+					];
+				},
+				array_keys( $cart_item_data ),
+				$cart_item_data
+			);
+
+			$products[] = [
+				'id'             => $product_id,
+				'quantity'       => $qty,
+				'variation'      => $variation,
+				'cart_item_data' => $cart_item_data,
+			];
 		}
 
 		return $products;
@@ -136,14 +188,9 @@ class CheckoutLink {
 		$products   = $this->get_products_from_checkout_link();
 		$errors     = new \WP_Error();
 
-		foreach ( $products as $product_id => $qty ) {
+		foreach ( $products as $product_data ) {
 			try {
-				$controller->add_to_cart(
-					[
-						'id'       => $product_id,
-						'quantity' => $qty,
-					]
-				);
+				$controller->add_to_cart( $product_data );
 			} catch ( \Exception $e ) {
 				$errors->add( 'error', $e->getMessage() );
 			}
