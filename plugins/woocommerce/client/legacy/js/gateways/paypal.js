@@ -16,7 +16,23 @@ jQuery(function ($) {
 			},
 
 			async createOrder() {
-				// TODO: Add createOrder logic here
+				// form data
+				const formData = new FormData();
+				formData.append( 'security', paypal_standard.create_order_nonce );
+				
+				try {
+					const url = paypal_standard.wc_ajax_url
+					.toString()
+					.replace( '%%endpoint%%', 'create_order' );
+					const response = await fetch( url, {
+						method: 'POST',
+						body: formData,
+					});
+					const data = await response.json();
+					return data.paypal_order_id;
+				} catch (error) {
+					console.error('Error creating order:', error);
+				}
 			},
 
 			async onApprove( data ) {

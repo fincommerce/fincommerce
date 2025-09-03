@@ -899,15 +899,16 @@ class WC_Gateway_Paypal extends WC_Payment_Gateway {
 	}
 }
 
-// Initialize PayPal admin notices handler on 'init' hook to ensure the class loads before admin_init and admin_notices hooks fire.
+// Initialize PayPal admin notices handler and ajax handler on 'init' hook to ensure the class loads before admin_init and admin_notices hooks fire.
 add_action(
 	'init',
 	function () {
-		if ( ! is_admin() || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
-			return;
+		if ( is_admin() || ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+			include_once __DIR__ . '/includes/class-wc-gateway-paypal-notices.php';
+			new WC_Gateway_Paypal_Notices();
 		}
 
-		include_once __DIR__ . '/includes/class-wc-gateway-paypal-notices.php';
-		new WC_Gateway_Paypal_Notices();
+		include_once __DIR__ . '/includes/class-wc-gateway-paypal-ajax-handler.php';
+		new WC_Gateway_Paypal_Ajax_Handler();
 	}
 );
