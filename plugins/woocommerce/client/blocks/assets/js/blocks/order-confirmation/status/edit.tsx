@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import { useBlockProps } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import Noninteractive from '@woocommerce/base-components/noninteractive';
 
 /**
  * Internal dependencies
@@ -15,15 +16,31 @@ const Edit = (): JSX.Element => {
 	} );
 
 	return (
-		<div { ...blockProps }>
-			<h1>{ __( 'Order received', 'woocommerce' ) }</h1>
-			<p>
-				{ __(
-					'Thank you. Your order has been received.',
-					'woocommerce'
-				) }
-			</p>
-		</div>
+		<Noninteractive>
+			<div { ...blockProps }>
+				<InnerBlocks
+					template={ [
+						[
+							'core/heading',
+							{
+								level: 1,
+								content: __( 'Order received', 'woocommerce' ),
+							},
+						],
+						[
+							'core/paragraph',
+							{
+								content: __(
+									'Thank you. Your order has been received.',
+									'woocommerce'
+								),
+							},
+						],
+					] }
+					templateLock="all"
+				/>
+			</div>
+		</Noninteractive>
 	);
 };
 
