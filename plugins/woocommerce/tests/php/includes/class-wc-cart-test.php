@@ -587,4 +587,43 @@ class WC_Cart_Test extends \WC_Unit_Test_Case {
 		$product->delete( true );
 		$coupon->delete( true );
 	}
+
+	/**
+	 * @textdox should clear store_api_draft_order from session when cart is empty
+	 */
+	public function test_setting_session_should_clear_store_api_draft_order_when_cart_is_empty() {
+		$cart = WC()->cart;
+		WC()->session->set( 'store_api_draft_order', 123 );
+
+		$cart->set_session();
+		$this->assertEquals( null, WC()->session->get( 'store_api_draft_order' ) );
+	}
+
+	/**
+	 * @textdox should not clear store_api_draft_order from session when cart is not empty
+	 */
+	public function test_setting_session_should_not_clear_store_api_draft_order_when_cart_is_not_empty() {
+		$cart    = WC()->cart;
+		$product = WC_Helper_Product::create_simple_product();
+
+		$cart->add_to_cart( $product->get_id() );
+		WC()->session->set( 'store_api_draft_order', 123 );
+
+		$cart->set_session();
+		$this->assertEquals( 123, WC()->session->get( 'store_api_draft_order' ) );
+	}
+
+	/**
+	 * @textdox should clear store_api_draft_order from session when the cart is emptied
+	 */
+	public function test_emptying_the_cart_should_clear_store_api_draft_order() {
+		$cart = WC()->cart;
+		WC()->session->set( 'store_api_draft_order', 123 );
+
+		$this->assertEquals( 123, WC()->session->get( 'store_api_draft_order' ) );
+
+		$cart->empty_cart();
+
+		$this->assertEquals( null, WC()->session->get( 'store_api_draft_order' ) );
+	}
 }
