@@ -2,8 +2,17 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const WooCommerceDependencyExtractionWebpackPlugin = require( '@woocommerce/dependency-extraction-webpack-plugin' );
 const path = require( 'path' );
 
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
 module.exports = {
 	...defaultConfig,
+	cache: ( NODE_ENV !== 'development' && { type: 'memory' } ) || {
+		type: 'filesystem',
+		cacheDirectory: path.resolve(
+			__dirname,
+			'../../node_modules/.cache/webpack-beta-tester'
+		),
+	},
 	entry: {
 		...defaultConfig.entry,
 		// Separate entry point for the live-branches page.

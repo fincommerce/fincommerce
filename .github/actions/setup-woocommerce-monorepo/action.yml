@@ -61,7 +61,9 @@ runs:
           if: ${{ inputs.pull-package-deps != 'false' && inputs.build-type != 'backend' }}
           uses: 'actions/cache@v4'
           with:
-              path: './node_modules/.cache'
+              path: |
+                ./node_modules/.cache/babel-loader
+                ./node_modules/.cache/jest
               key: "${{ runner.os }}-node-cache-${{ inputs.pull-package-deps }}-build:${{ inputs.build-type }}-${{ hashFiles( 'pnpm-lock.yaml' ) }}"
               restore-keys: '${{ runner.os }}-node-cache-${{ inputs.pull-package-deps }}-build:${{ inputs.build-type }}-'
         - name: 'Cache Composer Dependencies'

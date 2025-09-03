@@ -298,7 +298,7 @@ const webpackConfig = {
 };
 if ( ! isProduction || WC_ADMIN_PHASE === 'development' ) {
 	// Set default sourcemap mode if it wasn't set by WP_DEVTOOL.
-	webpackConfig.devtool = webpackConfig.devtool || 'source-map';
+	webpackConfig.devtool = webpackConfig.devtool || 'eval-source-map';
 
 	if ( isHot ) {
 		// Add dev server config

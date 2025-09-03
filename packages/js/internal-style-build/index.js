@@ -8,6 +8,10 @@ const RemoveEmptyScriptsPlugin = require( 'webpack-remove-empty-scripts' );
 const postcssPlugins = require( '@wordpress/postcss-plugins-preset' );
 const StyleAssetPlugin = require( './style-asset-plugin' );
 
+const projectPathForWatchIgnoreRegex = path
+	.resolve( __dirname, '..', '..', '..' )
+	.replaceAll( /\W/g, '.' );
+
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 module.exports = {
@@ -45,7 +49,7 @@ module.exports = {
 									path.resolve( __dirname, 'abstracts' ),
 								],
 							},
-							webpackImporter: true,
+							// webpackImporter: true,
 							additionalData: ( content, loaderContext ) => {
 								const { resourcePath } = loaderContext;
 								if ( resourcePath.includes( '@automattic+' ) ) {
@@ -83,6 +87,12 @@ module.exports = {
 			} ),
 			new StyleAssetPlugin(),
 		],
+	},
+	webpackWatchOptions: {
+		ignored: new RegExp(
+			// Watch packages and plugins, but without `node_modules` so watch tracks fewer files (pnpm linking gives webpack hard times).
+			`^(?!(${ projectPathForWatchIgnoreRegex }.(packages.js|plugins.woocommerce.client|plugins).[\\w-]+)[^\\w-](?!(node_modules|.*@.*)))`
+		),
 	},
 	StyleAssetPlugin,
 };
