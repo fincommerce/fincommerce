@@ -75,17 +75,47 @@ class AddToCartForm extends AbstractBlock {
 	 * @return string Add to Cart form HTML with increment and decrement buttons.
 	 */
 	private function add_steppers( $product_html, $product_name ) {
+		$pattern_input     = '/(<input[^>]*id="quantity_[^\"]*"[^>]*)\/>/';
+		$replacement_input = '$1 data-wp-on--change="actions.handleInputChange" />';
+		$product_html      = preg_replace( $pattern_input, $replacement_input, $product_html );
+
 		// Regex pattern to match the <input> element with id starting with 'quantity_'.
-		$pattern = '/(<input[^>]*id="quantity_[^"]*"[^>]*\/>)/';
+		$pattern_stepper = '/(<input[^>]*id="quantity_[^\"]*"[^>]*data-wp-on--change="actions.handleInputChange"[^>]*\/>)/';
 		// Replacement string to add button AFTER the matched <input> element.
 		/* translators: %s refers to the item name in the cart. */
-		$minus_button = '$1<button aria-label="' . esc_attr( sprintf( __( 'Reduce quantity of %s', 'woocommerce' ), $product_name ) ) . '" type="button" data-wp-on--click="actions.removeQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">−</button>';
+		$minus_button = '$1<button aria-label="' . esc_attr( sprintf( __( 'Reduce quantity of %s', 'woocommerce' ), $product_name ) ) . '" type="button" data-wp-on--click="actions.removeQuantity" data-wp-bind--disabled="!state.allowsDecrease" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--minus">−</button>';
 		// Replacement string to add button AFTER the matched <input> element.
 		/* translators: %s refers to the item name in the cart. */
-		$plus_button = '$1<button aria-label="' . esc_attr( sprintf( __( 'Increase quantity of %s', 'woocommerce' ), $product_name ) ) . '" type="button" data-wp-on--click="actions.addQuantity" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">+</button>';
-		$new_html    = preg_replace( $pattern, $plus_button, $product_html );
-		$new_html    = preg_replace( $pattern, $minus_button, $new_html );
+		$plus_button = '$1<button aria-label="' . esc_attr( sprintf( __( 'Increase quantity of %s', 'woocommerce' ), $product_name ) ) . '" type="button" data-wp-on--click="actions.addQuantity" data-wp-bind--disabled="!state.allowsIncrease" class="wc-block-components-quantity-selector__button wc-block-components-quantity-selector__button--plus">+</button>';
+		$new_html    = preg_replace( $pattern_stepper, $plus_button, $product_html );
+		$new_html    = preg_replace( $pattern_stepper, $minus_button, $new_html );
 		return $new_html;
+	}
+
+	/**
+	 * Filter the quantity column for grouped products to add interactive context for each child.
+	 *
+	 * @param string     $value The HTML for the quantity input.
+	 * @param WC_Product $grouped_product_child The child product object.
+	 * @return string     The wrapped HTML with interactive context.
+	 */
+	public function filter_grouped_product_quantity_column( $value, $grouped_product_child ) {
+		// Only wrap if stepper style is enabled and the child is purchasable and in stock.
+		if ( ! Features::is_enabled( 'add-to-cart-with-options-stepper-layout' ) ) {
+			return $value;
+		}
+		if ( ! $grouped_product_child->is_purchasable() || $grouped_product_child->has_options() || ! $grouped_product_child->is_in_stock() ) {
+			return $value;
+		}
+		$child_id     = $grouped_product_child->get_id();
+		$context_json = esc_attr(
+			wp_json_encode(
+				array(
+					'currentProductId' => $child_id,
+				)
+			)
+		);
+		return '<div data-wp-interactive="woocommerce/add-to-cart-form" data-wp-context=' . $context_json . '>' . $value . '</div>';
 	}
 
 	/**
@@ -142,6 +172,56 @@ class AddToCartForm extends AbstractBlock {
 	}
 
 	/**
+	 * Get quantity constraints for a product.
+	 *
+	 * @param WC_Product $product The product object.
+	 * @param bool       $is_grouped_child Whether this is a grouped child product.
+	 * @return array
+	 */
+	private function get_quantity_constraints( $product, $is_grouped_child = false ) {
+		/**
+		 * Filter the minimum quantity value allowed for the product.
+		 *
+		 * @since 10.1.0
+		 * @param int        $min_value Minimum quantity value.
+		 * @param WC_Product $product   Product object.
+		 */
+		$min = apply_filters( 'woocommerce_quantity_input_min', $product->get_min_purchase_quantity(), $product );
+		/**
+		 * Filter the maximum quantity value allowed for the product.
+		 *
+		 * @since 10.1.0
+		 * @param int        $max_value Maximum quantity value.
+		 * @param WC_Product $product   Product object.
+		 */
+		$max = apply_filters( 'woocommerce_quantity_input_max', $product->get_max_purchase_quantity(), $product );
+		/**
+		 * Filter the step quantity value allowed for the product.
+		 *
+		 * @since 10.1.0
+		 * @param int        $step_value Step quantity value.
+		 * @param WC_Product $product    Product object.
+		 */
+		$step = apply_filters( 'woocommerce_quantity_input_step', 1, $product );
+
+		$min = max( $min, 0 );
+		// Ensure step is positive.
+		$step = max( $step, 1 );
+
+		// Handle max value: -1 means unlimited, 0 or less becomes null.
+		if ( $max > 0 ) {
+			$max = max( $max, $min );
+		} else {
+			$max = null;
+		}
+		return array(
+			'min'  => $is_grouped_child ? 0 : (int) $min,
+			'max'  => null !== $max ? (int) $max : null,
+			'step' => (int) $step,
+		);
+	}
+
+	/**
 	 * Render the block.
 	 *
 	 * @param array    $attributes Block attributes.
@@ -192,6 +272,11 @@ class AddToCartForm extends AbstractBlock {
 			add_filter( 'woocommerce_add_to_cart_form_action', array( $this, 'add_to_cart_form_action' ), 10 );
 		}
 
+		/**
+		 * Add filter for grouped product quantity column to inject context for each child.
+		 */
+		add_filter( 'woocommerce_grouped_product_list_column_quantity', array( $this, 'filter_grouped_product_quantity_column' ), 10, 2 );
+
 		ob_start();
 
 		/**
@@ -212,6 +297,8 @@ class AddToCartForm extends AbstractBlock {
 		remove_action( 'woocommerce_variation_add_to_cart', 'woocommerce_simple_add_to_cart', 10 );
 
 		$product_html = ob_get_clean();
+
+		remove_filter( 'woocommerce_grouped_product_list_column_quantity', array( $this, 'filter_grouped_product_quantity_column' ), 10 );
 
 		if ( $is_descendent_of_single_product_block ) {
 			remove_filter( 'woocommerce_add_to_cart_form_action', array( $this, 'add_to_cart_form_action' ), 10 );
@@ -250,10 +337,59 @@ class AddToCartForm extends AbstractBlock {
 			)
 		);
 
+		if ( $is_stepper_style ) {
+			$context    = array();
+			$product_id = $product->get_id();
+
+			$context['products'] = array();
+
+			if ( $product->is_type( 'grouped' ) ) {
+				// Add parent product.
+				$context['products'][ $product_id ] = array(
+					'id'                  => $product_id,
+					'type'                => 'grouped',
+					'quantity'            => 0,
+					'quantityConstraints' => $this->get_quantity_constraints( $product ),
+					'parentProductId'     => null,
+				);
+
+				// Add child products.
+				foreach ( $product->get_children() as $child_product_id ) {
+					$child_product = wc_get_product( $child_product_id );
+					if ( $child_product && $child_product->is_purchasable() && $child_product->is_in_stock() && ! $child_product->has_options() ) {
+						$context['products'][ $child_product_id ] = array(
+							'id'                  => $child_product_id,
+							'type'                => $child_product->get_type(),
+							'quantity'            => 0,
+							'quantityConstraints' => $this->get_quantity_constraints( $child_product, true ),
+							'parentProductId'     => $product_id,
+						);
+					}
+				}
+			} else {
+				$context['products'][ $product_id ] = array(
+					'id'                  => $product_id,
+					'type'                => $product->get_type(),
+					'quantity'            => 0,
+					'quantityConstraints' => $this->get_quantity_constraints( $product ),
+					'parentProductId'     => null,
+				);
+			}
+
+			$context['currentProductId'] = $product_id;
+		}
+
 		$form = sprintf(
-			'<div %1$s %2$s>%3$s</div>',
+			'<div %1$s %2$s %3$s>%4$s</div>',
 			$wrapper_attributes,
 			$is_stepper_style ? 'data-wp-interactive="woocommerce/add-to-cart-form"' : '',
+			$is_stepper_style ? sprintf(
+				'data-wp-context=\'%s\'',
+				wp_json_encode(
+					$context,
+					JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+				)
+			) : '',
 			$product_html
 		);
 

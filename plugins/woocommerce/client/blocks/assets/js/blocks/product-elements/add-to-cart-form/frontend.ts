@@ -1,8 +1,25 @@
 /**
  * External dependencies
  */
-import { store } from '@wordpress/interactivity';
+import { store, getContext } from '@wordpress/interactivity';
 import { HTMLElementEvent } from '@woocommerce/types';
+
+export type ProductData = {
+	id: number;
+	type: string;
+	quantity: number;
+	quantityConstraints: {
+		min: number;
+		max: number | null;
+		step: number;
+	};
+	parentProductId: number | null;
+};
+
+export type Context = {
+	products: Record< number, ProductData >;
+	currentProductId: number;
+};
 
 const getInputElementFromEvent = (
 	event: HTMLElementEvent< HTMLButtonElement >
@@ -10,10 +27,41 @@ const getInputElementFromEvent = (
 	const target = event.target as HTMLButtonElement;
 
 	const inputElement = target.parentElement?.querySelector(
-		'.input-text.qty.text'
-	) as HTMLInputElement | null | undefined;
+		'.wc-block-components-quantity-selector__input'
+	) as HTMLInputElement | null;
 
 	return inputElement;
+};
+
+const getProductIdFromInput = ( inputElement: HTMLInputElement ): number => {
+	// For grouped products, extract child ID from input name.
+	const childProductIdMatch = inputElement.name.match( /quantity\[(\d+)\]/ );
+	if ( childProductIdMatch ) {
+		return parseInt( childProductIdMatch[ 1 ], 10 );
+	}
+
+	const context = getContext< Context >();
+
+	// For simple products, use current product ID.
+	return context.currentProductId;
+};
+
+const getQuantityStateInfo = () => {
+	const context = getContext< Context >();
+	const { products, currentProductId } = context;
+
+	const product = products[ currentProductId ];
+	if ( ! product ) {
+		return {
+			constraints: { min: 1, max: null, step: 1 },
+			currentQuantity: 0,
+		};
+	}
+
+	return {
+		constraints: product.quantityConstraints,
+		currentQuantity: product.quantity,
+	};
 };
 
 const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
@@ -23,22 +71,24 @@ const getInputData = ( event: HTMLElementEvent< HTMLButtonElement > ) => {
 		return;
 	}
 
-	const parsedValue = parseInt( inputElement.value, 10 );
-	const parsedMinValue = parseInt( inputElement.min, 10 );
-	const parsedMaxValue = parseInt( inputElement.max, 10 );
-	const parsedStep = parseInt( inputElement.step, 10 );
+	const context = getContext< Context >();
+	const productId = getProductIdFromInput( inputElement );
+	const product = context.products[ productId ];
 
+	if ( ! product ) {
+		return;
+	}
+
+	const parsedValue = parseInt( inputElement.value, 10 );
 	const currentValue = isNaN( parsedValue ) ? 0 : parsedValue;
-	const minValue = isNaN( parsedMinValue ) ? 1 : parsedMinValue;
-	const maxValue = isNaN( parsedMaxValue ) ? undefined : parsedMaxValue;
-	const step = isNaN( parsedStep ) ? 1 : parsedStep;
 
 	return {
 		currentValue,
-		minValue,
-		maxValue,
-		step,
+		minValue: product.quantityConstraints.min,
+		maxValue: product.quantityConstraints.max,
+		step: product.quantityConstraints.step,
 		inputElement,
+		productId,
 	};
 };
 
@@ -49,17 +99,30 @@ const dispatchChangeEvent = ( inputElement: HTMLInputElement ) => {
 };
 
 store( 'woocommerce/add-to-cart-form', {
-	state: {},
+	state: {
+		get allowsDecrease() {
+			const { constraints, currentQuantity } = getQuantityStateInfo();
+			const { min: minValue, step } = constraints;
+			return currentQuantity - step >= minValue;
+		},
+		get allowsIncrease() {
+			const { constraints, currentQuantity } = getQuantityStateInfo();
+			const { max: maxValue, step } = constraints;
+			return maxValue === null || currentQuantity + step <= maxValue;
+		},
+	},
 	actions: {
 		addQuantity: ( event: HTMLElementEvent< HTMLButtonElement > ) => {
 			const inputData = getInputData( event );
 			if ( ! inputData ) {
 				return;
 			}
-			const { currentValue, maxValue, step, inputElement } = inputData;
+			const context = getContext< Context >();
+			const { currentValue, maxValue, step, inputElement, productId } =
+				inputData;
 			const newValue = currentValue + step;
-
-			if ( maxValue === undefined || newValue <= maxValue ) {
+			if ( maxValue === null || newValue <= maxValue ) {
+				context.products[ productId ].quantity = newValue;
 				inputElement.value = newValue.toString();
 				dispatchChangeEvent( inputElement );
 			}
@@ -69,12 +132,25 @@ store( 'woocommerce/add-to-cart-form', {
 			if ( ! inputData ) {
 				return;
 			}
-			const { currentValue, minValue, step, inputElement } = inputData;
+			const context = getContext< Context >();
+			const { currentValue, minValue, step, inputElement, productId } =
+				inputData;
 			const newValue = currentValue - step;
-
 			if ( newValue >= minValue ) {
+				context.products[ productId ].quantity = newValue;
 				inputElement.value = newValue.toString();
 				dispatchChangeEvent( inputElement );
+			}
+		},
+		handleInputChange: ( event: HTMLElementEvent< HTMLInputElement > ) => {
+			const inputElement = event.target as HTMLInputElement;
+			const value = parseInt( inputElement.value, 10 );
+			const context = getContext< Context >();
+			const productId = getProductIdFromInput( inputElement );
+			if ( context.products[ productId ] ) {
+				context.products[ productId ].quantity = isNaN( value )
+					? 0
+					: value;
 			}
 		},
 	},
