@@ -3,6 +3,7 @@
 namespace Automattic\WooCommerce\Blocks\BlockTypes;
 
 use Automattic\WooCommerce\Blocks\BlockTypes\ProductCollection\Utils as ProductCollectionUtils;
+use Automattic\WooCommerce\Blocks\Utils\StyleAttributesUtils;
 use WP_Block;
 
 /**
@@ -78,14 +79,38 @@ class ProductTemplate extends AbstractBlock {
 
 		$classnames .= ' wc-block-product-template';
 
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'class'              => trim( $classnames ),
-				'data-wp-on--scroll' => 'actions.watchScroll',
-				'data-wp-init'       => 'callbacks.initResizeObserver',
-			)
+		// Build base attributes that are common to all layouts
+		$wrapper_attributes_array = array(
+			'class'              => trim( $classnames ),
+			'data-wp-on--scroll' => 'actions.watchScroll',
+			'data-wp-init'       => 'callbacks.initResizeObserver',
 		);
 
+		// Apply blockGap styles manually for flow layout
+		if ( isset( $block->context['displayLayout']['type'] ) && 'flow' === $block->context['displayLayout']['type'] ) {
+			$block_gap_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, [ 'block_gap' ] );
+
+			// Apply blockGap styles if they exist
+			if ( ! empty( $block_gap_styles['styles'] ) ) {
+				$wrapper_attributes_array['style'] = $block_gap_styles['styles'];
+			}
+		}
+
+		// Apply blockGap styles for flex layout to enable dynamic width calculations
+		if ( isset( $block->context['displayLayout']['type'] ) && 'flex' === $block->context['displayLayout']['type'] ) {
+			$block_gap_styles = StyleAttributesUtils::get_classes_and_styles_by_attributes( $attributes, [ 'block_gap' ] );
+
+			// Apply blockGap styles if they exist
+			if ( ! empty( $block_gap_styles['styles'] ) ) {
+				$wrapper_attributes_array['style'] = $block_gap_styles['styles'];
+			}
+
+			// Add CSS custom property for width calculations
+			$gap_value = StyleAttributesUtils::get_spacing_value( $attributes['style']['spacing']['blockGap'] ?? '1.25em' );
+			$wrapper_attributes_array['style'] = ( $wrapper_attributes_array['style'] ?? '' ) . ' --wc-product-template-gap: ' . $gap_value . ';';
+		}
+
+		$wrapper_attributes = get_block_wrapper_attributes( $wrapper_attributes_array );
 		$content = '';
 		while ( $query->have_posts() ) {
 			$query->the_post();
